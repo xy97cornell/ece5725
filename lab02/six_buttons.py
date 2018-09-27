@@ -20,6 +20,7 @@ while True:
     i6 = GPIO.input(19)
     if not i1:
         print("GPIO pin 17 pushed")
+        quit()
     elif not i2:
         print("GPIO pin 22 pushed")
     
