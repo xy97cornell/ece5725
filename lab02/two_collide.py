@@ -56,7 +56,7 @@ end_time = 10
 
 size = width, height = 320, 240
 speed1 = [1,1]#[5,5]#
-speed2 = [1,1]#[2,2]
+speed2 = [3,3]#[2,2]
 black = 0, 0, 0
 screen = pygame.display.set_mode(size)
 ball1 = pygame.image.load("../../python_games/gem1.png")
@@ -73,14 +73,15 @@ ballrect2.y = 150
 
 
 def elastic(speed1,speed2):
-    tmp = [speed1[0],speed1[1]]
+    '''tmp = [speed1[0],speed1[1]]
     if ballrect.colliderect(ballrect2): 
 		
         speed1[0] = speed2[0]
         speed1[1] = speed2[1]
         speed2[0] = tmp[0]
         speed2[1] = tmp[1]
-        
+       '''
+    pass 
 
 while flag:
 	 #for ballrect in ballrects:
@@ -115,6 +116,7 @@ while flag:
 
     #if(time.time()-start_time>end_time):
     #	quit()
+    time.sleep(0.01)
 
 
 GPIO.cleanup()	
