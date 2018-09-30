@@ -1,3 +1,12 @@
+# more_video_control_perf.py
+# 10/4/18 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+#
+# Testing setup for perf with more_video_control.py
+# runs the file for 10 seconds with perf called 
+# externally. 
+#
+
 import RPi.GPIO as GPIO
 import time
 import subprocess
@@ -5,6 +14,7 @@ import threading
 import thread
 import os
 
+#init GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -12,27 +22,25 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-wait_time = 0.00002
-'''
-def end():
-    #subprocess.call('echo "quit" > video_fifo', shell=True)
-    print('!!!')
-    thread.interrupt_main()
-threading.Timer(1, end).start()
-'''
+
 class timer(threading.Thread):
+    """
+    Timer class used to exit the program when a certain time limit 
+    has been reached
+    """
     def __init__(self):
         threading.Thread.__init__(self)
     def run(self):
-        time.sleep(10)
+        time.sleep(10) #10 second timer test
         subprocess.call('echo "quit" > video_fifo &', shell=True)
-        os._exit(1)
+        os._exit(1) #exits the thread
         return
     def stop(self):
         self._stop_event.set()
+
 timer().start()
 while True:
-    #time.sleep(wait_time)
+    time.sleep(0.2)
     i1 = GPIO.input(17)
     i2 = GPIO.input(22)
     i3 = GPIO.input(23)

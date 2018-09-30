@@ -1,3 +1,13 @@
+# more_video_control_cb_perf.py
+# 10/4/18 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+#
+# Testing setup for perf with more_video_control_cb.py
+# runs the file for 10 seconds with perf called 
+# externally. This one runs with the interrupts
+#
+
+
 import RPi.GPIO as GPIO
 import time
 import subprocess
@@ -48,6 +58,11 @@ GPIO.add_event_detect(26, GPIO.FALLING, callback=GPIO26_callback, bouncetime=300
 GPIO.add_event_detect(19, GPIO.FALLING, callback=GPIO19_callback, bouncetime=300)
 
 class timer(threading.Thread):
+    """
+    Timer class used to exit the program when a certain time limit 
+    has been reached
+    """
+
     def __init__(self):
         threading.Thread.__init__(self)
     def run(self):
