@@ -1,2 +1,10 @@
+# start_video_cb
+# 10/4/18 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+#
+# Start video with more video controls for the two extra buttons we added
+# uses the control file with interrupts.
+# 
+
 sudo SDL_VIDEODRIVER=fbcon SDL_FBDEV=/dev/fb1 mplayer -vo sdl -framedrop -slave -input file=video_fifo - bigbuckbunny320p.mp4 &
 python more_video_control_cb.py
