@@ -1,6 +1,7 @@
 # two_bounce.py
 # 10/4/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Lab 02
 #
 # Initalizes Pygame and draws two ball to bounce around on 
 # a black canvas. 

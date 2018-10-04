@@ -1,6 +1,7 @@
 # more_video_control.py
 # 10/4/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Lab 02
 #
 # Controls the video with two extra buttons 
 # Uses polling to check for commands

@@ -1,6 +1,7 @@
 # more_video_control_cb_perf.py
 # 10/4/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Lab 02
 #
 # Testing setup for perf with more_video_control_cb.py
 # runs the file for 10 seconds with perf called 

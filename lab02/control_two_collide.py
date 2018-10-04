@@ -1,5 +1,6 @@
 # control_two_collide.py
 # 10/4/18 
+# Lab 02
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
 #
 # Two levels of menu: 

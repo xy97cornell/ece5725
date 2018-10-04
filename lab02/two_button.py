@@ -1,5 +1,6 @@
 # two_button.py
 # 10/4/18 
+# Lab 02
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
 #
 # Two, on-screen buttons are displayed ‘start’ and ‘quit’

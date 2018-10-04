@@ -1,6 +1,7 @@
 # more_video_control_cb.py
 # 10/4/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Lab 02
 #
 # Checks if all six buttons work. Prints out which 
 # GPIO button has been pressed.

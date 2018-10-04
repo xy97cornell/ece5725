@@ -1,7 +1,7 @@
 # quit_button.py
 # 10/4/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-#
+# Lab 02
 # Initializes a single on screen button using Pygame
 # Displays the "quit" button on screen where if you tap it,
 # the program quits to the command shell. It stays in the polling

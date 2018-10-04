@@ -1,6 +1,7 @@
 # screen_coordinates.py
 # 10/4/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Lab 02
 #
 # Display a single quit button at the bottom of the screen
 # Tapping any location on the screen still display ‘Hit at x, y’ 
