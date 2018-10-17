@@ -56,8 +56,8 @@ p1 = GPIO.PWM(6, f1)
 p2 = GPIO.PWM(13, f2)
 p1.start(dc1)
 p2.start(dc2)
-left_history = [("Stop        ",0), ("Stop        ",0), ("Stop        ",0)];
-right_history = [("Stop        ",0), ("Stop        ",0), ("Stop        ",0)];
+left_history = [("Stop        ",0), ("Stop        ",0), ("Stop        ",0)]
+right_history = [("Stop        ",0), ("Stop        ",0), ("Stop        ",0)]
 def GPIO17_callback(channel):
     """
     interrupt handler for GPIO17; button on piTFT
@@ -66,7 +66,7 @@ def GPIO17_callback(channel):
     global left_history
     global paused
     if not paused:
-        left_history.insert(0, ("Counter-Clk ", int(time.time() - start_time)));
+        left_history.insert(0, ("Counter-Clk ", int(time.time() - start_time)))
         p1.ChangeDutyCycle(170/2170.0*100)
         p1.ChangeFrequency(100000/2170.0)
         left_history.pop()
@@ -81,7 +81,7 @@ def GPIO22_callback(channel):
     global left_history
     global paused
     if not paused: 
-        left_history.insert(0, ("Stop        ", int(time.time() - start_time)));
+        left_history.insert(0, ("Stop        ", int(time.time() - start_time)))
         p1.ChangeDutyCycle(150/2150.0*100)
         p1.ChangeFrequency(100000/2150.0)
         left_history.pop()
@@ -96,7 +96,7 @@ def GPIO23_callback(channel):
     global left_history
     global paused
     if not paused:
-        left_history.insert(0, ("Clkwise      ", int(time.time() - start_time))); 
+        left_history.insert(0, ("Clkwise      ", int(time.time() - start_time))) 
         p1.ChangeDutyCycle(130/2130.0*100)
         p1.ChangeFrequency(100000/2130.0)
         left_history.pop()
@@ -109,7 +109,7 @@ def GPIO27_callback(channel):
     global right_history
     global paused
     if not paused:
-        right_history.insert(0, ("Counter-Clk ", int(time.time() - start_time)));
+        right_history.insert(0, ("Counter-Clk ", int(time.time() - start_time)))
         p2.ChangeDutyCycle(170/2170.0*100)
         p2.ChangeFrequency(100000/2170.0) 
         right_history.pop()
@@ -123,7 +123,7 @@ def GPIO26_callback(channel):
     global right_history
     global paused
     if not paused:
-        right_history.insert(0, ("Stop        ", int(time.time() - start_time)));
+        right_history.insert(0, ("Stop        ", int(time.time() - start_time)))
         p2.ChangeDutyCycle(150/2150.0*100)
         p2.ChangeFrequency(100000/2150.0)
         right_history.pop()
@@ -138,7 +138,7 @@ def GPIO19_callback(channel):
     global right_history
     global paused
     if not paused: 
-        right_history.insert(0, ("Clkwise      ", int(time.time() - start_time)));
+        right_history.insert(0, ("Clkwise      ", int(time.time() - start_time)))
         p2.ChangeDutyCycle(130/2130.0*100)
         p2.ChangeFrequency(100000/2130.0)
         right_history.pop()
@@ -148,8 +148,8 @@ def GPIO19_callback(channel):
 GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
 GPIO.add_event_detect(22, GPIO.FALLING, callback=GPIO22_callback, bouncetime=300)
 GPIO.add_event_detect(23, GPIO.FALLING, callback=GPIO23_callback, bouncetime=300)
-GPIO.add_event_detect(26, GPIO.FALLING, callback=GPIO26_callback, bouncetime=300)
-GPIO.add_event_detect(19, GPIO.FALLING, callback=GPIO19_callback, bouncetime=300)
+#GPIO.add_event_detect(26, GPIO.FALLING, callback=GPIO26_callback, bouncetime=300)
+#GPIO.add_event_detect(19, GPIO.FALLING, callback=GPIO19_callback, bouncetime=300)
 GPIO.add_event_detect(27, GPIO.FALLING, callback=GPIO27_callback, bouncetime=300)
 
 
@@ -188,12 +188,12 @@ screen.blit(text_surface, rect)
 pygame.display.flip()
 sleeptime = 0.02 # For artificially setting the FPS
 
-positions1 = [(50, 80), (50, 120), (50, 160)];
-positions2 = [(260, 80), (260, 120), (260, 160)]; 
+positions1 = [(50, 80), (50, 120), (50, 160)]
+positions2 = [(260, 80), (260, 120), (260, 160)]
 
-try:
-    while(code_running):
-         
+
+while(code_running):
+    try:
         pygame.draw.rect(screen, BLACK, pygame.Rect(0, 50, 110, 200))
         pygame.draw.rect(screen, BLACK, pygame.Rect(210, 50, 100, 200))
         text_surface = font2.render("QUIT", True, WHITE)
@@ -201,12 +201,12 @@ try:
         screen.blit(text_surface, rect)
         for i in range(0, 3):
             title, record = left_history[i]
-            text_surface = font2.render(title + ":" + str(record), True, WHITE); 
+            text_surface = font2.render(title + ":" + str(record), True, WHITE)
             rect = text_surface.get_rect(center=positions1[i])
             screen.blit(text_surface, rect)
 
             title, record = right_history[i]
-            text_surface = font2.render(title + ":" + str(record), True, WHITE);
+            text_surface = font2.render(title + ":" + str(record), True, WHITE)
             rect = text_surface.get_rect(center=positions2[i])
             screen.blit(text_surface, rect)
         pygame.display.flip()
@@ -243,6 +243,7 @@ try:
         time.sleep(sleeptime)
         if time.time() - start_time > 30:
             break
-except KeyboardInterrupt:
-    code_running = False
+    except KeyboardInterrupt:
+        code_running = False
+
 GPIO.cleanup()	
