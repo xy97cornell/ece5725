@@ -5,11 +5,14 @@
 #
 # Displays direction (clockwise, counter-clockwise, stopped) for
 # each motor
-# Displays a single, red ‘panic stop’ button on the piTFT. If pressed, motors
-# immediately stop and ‘panic stop’ changes to a green ‘resume’ button
-# Displays a ‘quit’ button on the piTFT. When hit, quit causes the program to end
+# Displays a single, red ‘panic stop’ button on the piTFT. 
+# If pressed, motors immediately stop and ‘panic stop’ 
+# changes to a green ‘resume’ button.
+# Displays a ‘quit’ button on the piTFT. When hit, quit causes the 
+# program to end
 # and control returns to the Linux console screen.
-# Records start-time/direction pairs for each motor and display a scrolling history of
+# Records start-time/direction pairs for each motor and display a 
+# scrolling history of
 # the most recent motion (include 3 past entries for each motor).
 # 
 # 
@@ -26,7 +29,8 @@ os.putenv('SDL_VIDEODRIVER', 'fbcon') # Display on piTFT
 os.putenv('SDL_FBDEV', '/dev/fb1') 
 
 os.putenv('SDL_MOUSEDRV', 'TSLIB') #setup mouse in pygame
-os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen') #touchscreen as mouse
+#touchscreen as mouse
+os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen') 
 
 pygame.init()
 pygame.mouse.set_visible(False)
@@ -47,8 +51,10 @@ p1 = GPIO.PWM(6, f1)
 p2 = GPIO.PWM(13, f2)
 p1.start(dc1)
 p2.start(dc2)
-left_history = [("Stop        ",0), ("Stop        ",0), ("Stop        ",0)]
-right_history = [("Stop        ",0), ("Stop        ",0), ("Stop        ",0)]
+left_history = [("Stop        ",0), ("Stop        ",0), \
+("Stop        ",0)]
+right_history = [("Stop        ",0), ("Stop        ",0), \
+("Stop        ",0)]
 
 
 
@@ -60,7 +66,8 @@ def left_counterclkw():
     global left_history
     global paused
     if not paused:
-        left_history.insert(0, ("Counter-Clk ", int(time.time() - start_time)))
+        left_history.insert(0, ("Counter-Clk ", \
+        int(time.time() - start_time)))
         p1.ChangeDutyCycle(170/2170.0*100)
         p1.ChangeFrequency(100000/2170.0)
         left_history.pop()
@@ -75,7 +82,8 @@ def left_stop():
     global left_history
     global paused
     if not paused: 
-        left_history.insert(0, ("Stop        ", int(time.time() - start_time)))
+        left_history.insert(0, ("Stop        ", \
+        int(time.time() - start_time)))
         p1.ChangeDutyCycle(150/2150.0*100)
         p1.ChangeFrequency(100000/2150.0)
         left_history.pop()
@@ -90,7 +98,8 @@ def left_clkw():
     global left_history
     global paused
     if not paused:
-        left_history.insert(0, ("Clkwise      ", int(time.time() - start_time))) 
+        left_history.insert(0, ("Clkwise      ", \
+        int(time.time() - start_time))) 
         p1.ChangeDutyCycle(130/2130.0*100)
         p1.ChangeFrequency(100000/2130.0)
         left_history.pop()
@@ -103,7 +112,8 @@ def right_counterclkw():
     global right_history
     global paused
     if not paused:
-        right_history.insert(0, ("Counter-Clk ", int(time.time() - start_time)))
+        right_history.insert(0, ("Counter-Clk ", \
+        int(time.time() - start_time)))
         p2.ChangeDutyCycle(170/2170.0*100)
         p2.ChangeFrequency(100000/2170.0) 
         right_history.pop()
@@ -117,7 +127,8 @@ def right_stop():
     global right_history
     global paused
     if not paused:
-        right_history.insert(0, ("Stop        ", int(time.time() - start_time)))
+        right_history.insert(0, ("Stop        ", \
+        int(time.time() - start_time)))
         p2.ChangeDutyCycle(150/2150.0*100)
         p2.ChangeFrequency(100000/2150.0)
         right_history.pop()
@@ -132,7 +143,8 @@ def right_clkw():
     global right_history
     global paused
     if not paused: 
-        right_history.insert(0, ("Clkwise      ", int(time.time() - start_time)))
+        right_history.insert(0, ("Clkwise      ", \
+        int(time.time() - start_time)))
         p2.ChangeDutyCycle(130/2130.0*100)
         p2.ChangeFrequency(100000/2130.0)
         right_history.pop()
