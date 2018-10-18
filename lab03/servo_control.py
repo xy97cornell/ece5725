@@ -1,3 +1,14 @@
+# servo_control.py
+# 10/18/18 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Lab 03
+#
+# Steps through the servo rotation speeds and 
+# directions in a step increment. We turn from 
+# stopped position to full clockwise rotation
+# to full counterclockwise rotation.
+#
+
 
 import RPi.GPIO as GPIO
 import time
@@ -14,17 +25,12 @@ def GPIO17_callback(channel):
     global code_running
     code_running = False
 p = GPIO.PWM(6, 10)
-GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
-#GPIO.wait_for_edge(17, GPIO.FALLING)
-p.start(dc) # where dc is the duty cycle (0.0 <= dc <= 100.0)
+GPIO.add_event_detect(17, GPIO.FALLING, \
+callback=GPIO17_callback, bouncetime=300)
 
-#ip.ChangeFrequency(freq) # where freq is the new frequency in Hz
+# where dc is the duty cycle (0.0 <= dc <= 100.0)
 
-#p.ChangeDutyCycle(dc) # where 0.0 <= dc <= 100.0
-
-#p.stop()
-
-#p = GPIO.PWM(GPIO_pin, frequency)
+p.start(dc) 
 
 while code_running:
     try:
