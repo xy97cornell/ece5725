@@ -1,22 +1,17 @@
-# control_two_collide.py
-# 10/4/18 
-# Lab 02
+# rolling_control.py
+# 10/18/18 
+# Lab 03
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
 #
-# Two levels of menu: 
-#   main:
-#     start and quit button like in two_button.py
-#       Hitting 'start' begins playback of two_collide.py
-#       Hitting 'quit' ends the program and returns to the Linux 
-#       console screen.
-#   control: 
-#     After hitting 'start', displays four new options:
-#       Pause/restart: pause a running animation. Restart a paused animation
-#       Faster: speed up the animation by a fixed amount
-#       Slower: slow the animation by a fixed amount
-#       Back: stop the animation and return to the 'top' menu screen which
+# Displays direction (clockwise, counter-clockwise, stopped) for
+# each motor
+# Displays a single, red ‘panic stop’ button on the piTFT. If pressed, motors
+# immediately stop and ‘panic stop’ changes to a green ‘resume’ button
+# Displays a ‘quit’ button on the piTFT. When hit, quit causes the program to end
+# and control returns to the Linux console screen.
+# Records start-time/direction pairs for each motor and display a scrolling history of
+# the most recent motion (include 3 past entries for each motor).
 # 
-# Contains a physical bail-out button for this code.
 # 
 
 import time
@@ -48,6 +43,7 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
 
+#START SERVO IN STOP POSITION
 dc1 = 150/2150.0*100
 dc2 = 150/2150.0*100
 f1 = 100000/2150.0
@@ -148,8 +144,8 @@ def GPIO19_callback(channel):
 GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
 GPIO.add_event_detect(22, GPIO.FALLING, callback=GPIO22_callback, bouncetime=300)
 GPIO.add_event_detect(23, GPIO.FALLING, callback=GPIO23_callback, bouncetime=300)
-#GPIO.add_event_detect(26, GPIO.FALLING, callback=GPIO26_callback, bouncetime=300)
-#GPIO.add_event_detect(19, GPIO.FALLING, callback=GPIO19_callback, bouncetime=300)
+GPIO.add_event_detect(26, GPIO.FALLING, callback=GPIO26_callback, bouncetime=300)
+GPIO.add_event_detect(19, GPIO.FALLING, callback=GPIO19_callback, bouncetime=300)
 GPIO.add_event_detect(27, GPIO.FALLING, callback=GPIO27_callback, bouncetime=300)
 
 
@@ -163,9 +159,6 @@ pygame.init()
 font1 = pygame.font.Font(None, 40)
 font2 = pygame.font.Font(None, 20)
 font3 = pygame.font.Font(None, 30)
-# First level buttons
-#button = (180, 120), 'Quit':(240, 220), 'Resume':(180, 120)}
-# Four new buttons of the second level
 screen.fill(BLACK) # Erase the Work space
 pygame.draw.circle(screen, RED, (160, 120), 30)
 
@@ -199,7 +192,7 @@ while(code_running):
         text_surface = font2.render("QUIT", True, WHITE)
         rect = text_surface.get_rect(center=(240, 220))
         screen.blit(text_surface, rect)
-        for i in range(0, 3):
+        for i in range(0, 3): #displaying the history on the screen
             title, record = left_history[i]
             text_surface = font2.render(title + ":" + str(record), True, WHITE)
             rect = text_surface.get_rect(center=positions1[i])
@@ -220,7 +213,7 @@ while(code_running):
                     if x > 120 and x < 200:
                         paused = not paused
                         pygame.draw.rect(screen, BLACK, pygame.Rect(110, 90, 100, 70))
-                        if paused == True:
+                        if paused == True: #If paused, we must stop and save state. 
                             p1.ChangeDutyCycle(150/2150.0*100)
                             p1.ChangeFrequency(100000/2150.0)
                             p2.ChangeDutyCycle(150/2150.0*100)

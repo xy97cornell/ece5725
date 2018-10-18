@@ -1,3 +1,19 @@
+# run_test.py
+# 10/18/18 
+# Lab 03
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+#
+# Displays direction (clockwise, counter-clockwise, stopped) for
+# each motor
+# Displays a single, red ‘panic stop’ button on the piTFT. If pressed, motors
+# immediately stop and ‘panic stop’ changes to a green ‘resume’ button
+# Displays a ‘quit’ button on the piTFT. When hit, quit causes the program to end
+# and control returns to the Linux console screen.
+# Records start-time/direction pairs for each motor and display a scrolling history of
+# the most recent motion (include 3 past entries for each motor).
+# 
+# 
+
 import time
 import RPi.GPIO as GPIO
 import pygame
@@ -133,12 +149,10 @@ pygame.init()
 font1 = pygame.font.Font(None, 40)
 font2 = pygame.font.Font(None, 20)
 font3 = pygame.font.Font(None, 30)
-# First level buttons
-#button = (180, 120), 'Quit':(240, 220), 'Resume':(180, 120)}
-# Four new buttons of the second level
 screen.fill(BLACK) # Erase the Work space
 pygame.draw.circle(screen, RED, (160, 120), 30)
 
+#renders the labels on the piTFT
 text_surface = font1.render("STOP", True, WHITE)
 rect = text_surface.get_rect(center=(160, 120))
 screen.blit(text_surface, rect)
@@ -164,19 +178,19 @@ positions2 = [(260, 80), (260, 120), (260, 160)]
 
 class controller(threading.Thread):
     """
-    Timer class used to exit the program when a certain time limit 
-    has been reached
+    Controller class with FSM that checks which state the robot is at
     """
-    global paused
-    global code_running
+    global paused 
+    global code_running #shared global variable for exit needed.
 
     def __init__(self):
         threading.Thread.__init__(self)
-        self.state = 6
-        self.counter = 0
+        self.state = 6 #starting state
+        self.counter = 0 #counter for how long we should turn and move for.
     def run(self):
         while(code_running):
             if(self.state == 0 and not paused):
+                #will only set the servos if we are not paused
                 left_stop()
                 right_stop()
                 if(self.counter>=150):
@@ -219,7 +233,10 @@ class controller(threading.Thread):
                     self.state = 0
                     self.counter = 0
             if not paused:
-                self.counter = self.counter + 1
+                #counter only increases if not paused
+                #This saves the state of the robot movements
+                #so that it can resume.
+                self.counter = self.counter + 1 
             time.sleep(0.02)
 
     def stop(self):
@@ -257,7 +274,7 @@ while(code_running):
                         paused = not paused
                         pygame.draw.rect(screen, BLACK, pygame.Rect(110, 90, 100, 70))
                         if paused == True:
-
+                                
                             p1.ChangeDutyCycle(150/2150.0*100)
                             p1.ChangeFrequency(100000/2150.0)
                             p2.ChangeDutyCycle(150/2150.0*100)

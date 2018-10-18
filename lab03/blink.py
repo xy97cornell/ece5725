@@ -1,4 +1,11 @@
-
+# blink.py
+# 10/18/18 
+# Lab 03
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+#
+# blinks LED and exits if 'q' is pressed. Otherwise waits for command
+# 
+# 
 import RPi.GPIO as GPIO
 import time
 frequency = 0.5 
@@ -12,13 +19,6 @@ code_running = True
  
 p.start(dc) # where dc is the duty cycle (0.0 <= dc <= 100.0)
 
-#ip.ChangeFrequency(freq) # where freq is the new frequency in Hz
-
-#p.ChangeDutyCycle(dc) # where 0.0 <= dc <= 100.0
-
-#p.stop()
-
-#p = GPIO.PWM(GPIO_pin, frequency)
 while (code_running):
     a = raw_input("select freq")
     if(a=='q'):

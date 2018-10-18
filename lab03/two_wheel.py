@@ -1,11 +1,12 @@
-# more_video_control_cb.py
-# 10/4/18 
+# two_wheel.py
+# 10/18/18 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-# Lab 02
+# Lab 03
 #
-# Controls the video with two extra buttons 
-# Uses GPIO interrupts to check for commands
-# Adds fast forward 30 seconds and rewind 30 seconds functionality
+# Controls the speed of the two wheels based on 
+# the input to the GPIO buttons.
+# We have full speed clockwise, counterclockwise
+# and stop
 #
 
 import RPi.GPIO as GPIO
@@ -21,11 +22,13 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
 
-
+# Initialize the duty cycle and frequecy of the servos to 
+# stopped
 dc1 = 150/2150.0*100
 dc2 = 150/2150.0*100
 f1 = 100000/2150.0
 f2 = 100000/2150.0
+# Set two available GPIO pins as output
 p1 = GPIO.PWM(6, f1)
 p2 = GPIO.PWM(13, f2)
 p1.start(dc1)
