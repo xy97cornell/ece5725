@@ -1,9 +1,11 @@
-//
-// jfs9 10/24/15
-// v2 Add wiringPi to toggle output
-// v5 10/22/18 - add frequency display
-// v6 10/22/18 - loop not nanosleep
-//
+/*
+ test_rt_skel_v6.py
+ 11/01/18 
+ Lab 04
+ Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+
+ Modified rt_test file from Prof. Skovira's test_rt_skel_v6.c
+*/
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,6 +1,6 @@
 # blink.py
-# 10/18/18 
-# Lab 03
+# 11/01/18 
+# Lab 04
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
 #
 # blinks LED and exits if 'q' is pressed. Otherwise waits for command

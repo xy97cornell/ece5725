@@ -1,4 +1,11 @@
-
+# load.py
+# 11/01/18 
+# Lab 04
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+#
+# Runs a float division in a while loop continuously.
+# 100% loads one of the RPI's cores
+# 
 
 
 while True:
