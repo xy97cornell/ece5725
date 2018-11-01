@@ -1,5 +1,5 @@
 /*
- test_rt_skel_v6.py
+ test_rt.c
  11/01/18 
  Lab 04
  Xiaoyu Yan (xy97) and Ji Wu (jw2473)
