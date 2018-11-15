@@ -1,23 +1,3 @@
-# control_two_collide.py
-# 10/4/18 
-# Lab 02
-# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-#
-# Two levels of menu: 
-#   main:
-#     start and quit button like in two_button.py
-#       Hitting ‘start’ begins playback of two_collide.py
-#       Hitting ‘quit’ ends the program and returns to the Linux 
-#       console screen.
-#   control: 
-#     After hitting 'start', displays four new options:
-#       Pause/restart: pause a running animation. Restart a paused animation
-#       Faster: speed up the animation by a fixed amount
-#       Slower: slow the animation by a fixed amount
-#       Back: stop the animation and return to the ‘top’ menu screen which
-# 
-# Contains a physical bail-out button for this code.
-# 
 
 import time
 import RPi.GPIO as GPIO
