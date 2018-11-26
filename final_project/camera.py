@@ -31,5 +31,6 @@ from time import sleep
 camera = PiCamera()
 
 camera.start_preview()
+camera.resolution = (320, 240) # max for images
 sleep(10)
 camera.stop_preview()
