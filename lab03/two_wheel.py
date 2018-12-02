@@ -40,7 +40,7 @@ def GPIO17_callback(channel):
     global p1
     p1.ChangeDutyCycle(170/2170.0*100)
     p1.ChangeFrequency(100000/2170.0)
-    print "in interrupt 17"
+    #print "in interrupt 17"
 
 
 def GPIO22_callback(channel):
@@ -50,7 +50,7 @@ def GPIO22_callback(channel):
     global p1
     p1.ChangeDutyCycle(150/2150.0*100)
     p1.ChangeFrequency(100000/2150.0)
-    print "in interrupt 22"
+    #print "in interrupt 22"
 
 
 def GPIO23_callback(channel):
@@ -60,7 +60,7 @@ def GPIO23_callback(channel):
     global p1
     p1.ChangeDutyCycle(130/2130.0*100)
     p1.ChangeFrequency(100000/2130.0)
-    print "in interrupt 23"
+    #print "in interrupt 23"
 
 
 def GPIO27_callback(channel):
@@ -71,7 +71,7 @@ def GPIO27_callback(channel):
     global p2
     p2.ChangeDutyCycle(170/2170.0*100)
     p2.ChangeFrequency(100000/2170.0)
-    print "in interrupt 27"
+    #print "in interrupt 27"
 
 def GPIO26_callback(channel):
     """
@@ -80,7 +80,7 @@ def GPIO26_callback(channel):
     global p2
     p2.ChangeDutyCycle(150/2150.0*100)
     p2.ChangeFrequency(100000/2150.0)
-    print "in interrupt 26"
+    #print "in interrupt 26"
 
 
 def GPIO19_callback(channel):
@@ -90,7 +90,7 @@ def GPIO19_callback(channel):
     global p2
     p2.ChangeDutyCycle(130/2130.0*100)
     p2.ChangeFrequency(100000/2130.0)
-    print "in interrupt 19"
+    #print "in interrupt 19"
     
 # Setup the GPIO pins as interrupts
 GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
@@ -105,7 +105,7 @@ try:
     time.sleep(15)
 except KeyboardInterrupt:
     GPIO.cleanup() #cleans the GPIO in case of usage of CTRL C
-    print 
+    #print 
 #If exit button pressed. Exit video and terminate code
 
 
