@@ -19,7 +19,7 @@
 
 import time
 import RPi.GPIO as GPIO
-import pygame
+#import pygame
 import subprocess
 import os
 import threading
@@ -32,8 +32,8 @@ os.putenv('SDL_MOUSEDRV', 'TSLIB') #setup mouse in pygame
 #touchscreen as mouse
 os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen') 
 
-pygame.init()
-pygame.mouse.set_visible(False)
+#pygame.init()
+#pygame.mouse.set_visible(False)
 size = 320, 240
 code_running = True
 paused = False
@@ -71,7 +71,7 @@ def left_counterclkw():
         p1.ChangeDutyCycle(170/2170.0*100)
         p1.ChangeFrequency(100000/2170.0)
         left_history.pop()
-        print "in interrupt 17"
+        #print "in interrupt 17"
 
 
 def left_stop():
@@ -87,7 +87,7 @@ def left_stop():
         p1.ChangeDutyCycle(150/2150.0*100)
         p1.ChangeFrequency(100000/2150.0)
         left_history.pop()
-        print "in interrupt 22"
+        #print "in interrupt 22"
 
 
 def left_clkw():
@@ -103,7 +103,7 @@ def left_clkw():
         p1.ChangeDutyCycle(130/2130.0*100)
         p1.ChangeFrequency(100000/2130.0)
         left_history.pop()
-        print "in interrupt 23"
+        #print "in interrupt 23"
 
 
 def right_counterclkw():
@@ -117,7 +117,7 @@ def right_counterclkw():
         p2.ChangeDutyCycle(170/2170.0*100)
         p2.ChangeFrequency(100000/2170.0) 
         right_history.pop()
-        print "in interrupt 27"
+        #print "in interrupt 27"
 
 def right_stop():
     """
@@ -132,7 +132,7 @@ def right_stop():
         p2.ChangeDutyCycle(150/2150.0*100)
         p2.ChangeFrequency(100000/2150.0)
         right_history.pop()
-        print "in interrupt 26"
+        #print "in interrupt 26"
 
 
 def right_clkw():
@@ -148,7 +148,7 @@ def right_clkw():
         p2.ChangeDutyCycle(130/2130.0*100)
         p2.ChangeFrequency(100000/2130.0)
         right_history.pop()
-        print "in interrupt 19"
+        #print "in interrupt 19"
     
 
 

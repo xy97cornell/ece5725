@@ -41,14 +41,14 @@ while code_running:
             dc = h/(h+2000.0)*100
             p.ChangeDutyCycle(dc)
             print(dc, frequency)
-            time.sleep(3)
+            time.sleep(100)
         for h in range(150, 171, 2): 
             frequency = 100000/(h + 2000.0)
             p.ChangeFrequency(frequency)
             dc = h/(h+2000.0) *100
             p.ChangeDutyCycle(dc)
             print(dc, frequency)
-            time.sleep(3)
+            time.sleep(100)
         code_running = False
     except KeyboardInterrupt:
         code_running = False
