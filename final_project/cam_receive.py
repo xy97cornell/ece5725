@@ -8,11 +8,11 @@ from PIL import Image
 # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
 # all interfaces)
 server_socket = socket.socket()
-server_socket.bind(('192.168.137.109', 8000))
+server_socket.bind(('192.168.137.246', 8000))
 server_socket.listen(0)
 
 # Accept a single connection and make a file-like object out of it
-#connection = server_socket.accept()[0].makefile('rb')
+connection = server_socket.accept()[0].makefile('rb')
 try:
     #video = cv2.VideoCapture('tcp://192.168.137.246:8000/')
     while True:
@@ -40,6 +40,6 @@ try:
         #cv2.imshow('frame', i
         #sleep(0.2)
 finally:
-    print(1)
-    #connection.close()
-    #server_socket.close()
+  
+    connection.close()
+    server_socket.close()
