@@ -42,24 +42,24 @@ class Robot:
 
     def forward(self):
         print("Moving forward")
-        self.left_servo.ChangeDutyCycle(self.CLKW_T/(self.CLKW_T+self.DOWN_T))
-        self.left_servo.ChangeFrequency(1/self.CLKW_T/(self.CLKW_T+self.DOWN_T))
-        self.right_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T))
-        self.right_servo.ChangeFrequency(1/self.CCLKW_T/(self.CCLKW_T+self.DOWN_T))
+        self.left_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T)*100)
+        self.left_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
+        self.right_servo.ChangeDutyCycle(self.CLKW_T/(self.CLKW_T+self.DOWN_T)*100)
+        self.right_servo.ChangeFrequency(1/(self.CLKW_T+self.DOWN_T))
 
-    def right(self):
-        print("Moving right")
-        self.left_servo.ChangeDutyCycle(self.CLKW_T/(self.CLKW_T+self.DOWN_T))
-        self.left_servo.ChangeFrequency(1/self.CLKW_T/(self.CLKW_T+self.DOWN_T))
-        self.right_servo.ChangeDutyCycle(self.CLKW_T/(self.CLKW_T+self.DOWN_T))
-        self.right_servo.ChangeFrequency(1/self.CLKW_T/(self.CLKW_T+self.DOWN_T))
-    
     def left(self):
         print("Moving left")
-        self.left_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T))
-        self.left_servo.ChangeFrequency(1/self.CCLKW_T/(self.CCLKW_T+self.DOWN_T))
-        self.right_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T))
-        self.right_servo.ChangeFrequency(1/self.CCLKW_T/(self.CCLKW_T+self.DOWN_T))
+        self.left_servo.ChangeDutyCycle(self.CLKW_T/(self.CLKW_T+self.DOWN_T)*100)
+        self.left_servo.ChangeFrequency(1/(self.CLKW_T+self.DOWN_T))
+        self.right_servo.ChangeDutyCycle(self.CLKW_T/(self.CLKW_T+self.DOWN_T)*100)
+        self.right_servo.ChangeFrequency(1/(self.CLKW_T+self.DOWN_T))
+    
+    def right(self):
+        print("Moving right")
+        self.left_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T)*100)
+        self.left_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
+        self.right_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T)*100)
+        self.right_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
 
     
 
@@ -75,20 +75,21 @@ class Robot:
         self.left_servo.start(self.STOP_DC)
         self.right_servo.start(self.STOP_DC)
         self.stop()
-        time.sleep(10)
+        time.sleep(5)
         self.forward()
-        time.sleep(10)
+        time.sleep(5)
         self.right()
-        time.sleep(10)
+        time.sleep(5)
         self.left()
-        # time.sleep(10)
+        time.sleep(5)
 	
+    
     def shutdown(self):
-		GPIO.cleanup()
+        GPIO.cleanup()
 	
 
     def exit(self):
-		GPIO.cleanup()
+        GPIO.cleanup()
 	
 
 

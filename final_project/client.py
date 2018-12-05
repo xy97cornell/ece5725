@@ -68,7 +68,7 @@ def sendIP():
 	c.disconnect()
 
 def stream(sock, connection):
-	while(True)
+	while(True):
 		try:
 			output = SplitFrames(connection)
 			with picamera.PiCamera(resolution=(320,240), framerate=15) as camera:
@@ -126,6 +126,11 @@ while run:
 						continue
 	except KeyboardInterrupt:
 		run = False
+	
+		
+s1.close()
+s2.close()
+GPIO.cleanup()
 
 	
 
