@@ -150,9 +150,9 @@ code_running=True
 camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
 camera.daemon = True
 camera.start()
-camera = threading.Thread(target=button_send, args=(command_server,))
-camera.daemon = True
-camera.start()
+button = threading.Thread(target=button_send, args=(command_server,))
+button.daemon = True
+button.start()
 
 while code_running:
     try:

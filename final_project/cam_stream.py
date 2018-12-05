@@ -3,6 +3,7 @@ import socket
 import struct
 import time
 import picamera
+import cv2
 
 class SplitFrames(object):
     def __init__(self, connection):
@@ -12,6 +13,9 @@ class SplitFrames(object):
 
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
+		    #EDIT
+            self.stream = cv2.imencode('.jpg', self.stream, [cv2.IMWRITE_JPEG_QUALITY, 40])[1].tostring()
+		    
             # Start of new frame; send the old one's length
             # then the data
             size = self.stream.tell()
@@ -28,7 +32,7 @@ class SplitFrames(object):
 client_socket = socket.socket()
 #client_socket.bind(('192.168.137.246',8000))
 #client_socket.listen(0)
-client_socket.connect(('192.168.137.246', 8000))
+client_socket.connect(('10.148.0.210', 8000))
 connection = client_socket.makefile('wb')
 #connection = client_socket.accept()[0].makefile('wb')
 try:
