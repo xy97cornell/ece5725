@@ -8,6 +8,9 @@ import picamera
 import subprocess
 import re
 import time
+from bluedot.btcomm import BluetoothClient, BluetoothAdapter
+import io
+import struct
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.OUT)
@@ -16,121 +19,109 @@ p1 = GPIO.PWM(6, 100000/2150)
 p2 = GPIO.PWM(13, 100000/2150)
 p1.start(150/2150.0*100)
 p2.start(150/2150.0*100)
-camera = picamera.PiCamera()
-camera.resolution = (256, 320)
-camera.framerate = 24
-global img
-img = np.zeros((320, 256, 3), dtype=np.uint8)
-global img0
-img0 = np.zeros((320, 256, 3), dtype=np.uint8)
 
 result = subprocess.run('hostname -I', stdout=subprocess.PIPE, shell=True)
 result = result.stdout.decode('utf-8')
 client_IP = re.split(' |\n', result)[0]
 print("client_IP: "+client_IP)
-global n
-n = 0
-def sendImage():
-    global img
-    global img0
-    global connection
-    n = 0
-    while True:
-        #threading.Timer(0.5, sendImage).start() 
-        camera.capture(img, 'rgb')
-        #cv2.imshow('frame',img)
-        #cv2.waitKey(25)
-        diff = (img.astype(np.int16) - img0.astype(np.int16))/2
-        diff = diff.astype(np.int8).view(np.uint8)
-        diff += 128
-        if n % 5 == 0:
-            compressed = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 40])[1].tostring()
-            #print(np.fromstring(compressed,np.uint8).shape)
-            #img = cv2.imdecode(np.fromstring(compressed, np.uint8), cv2.IMREAD_COLOR)
-            #cv2.imshow('frame', img)
-            #cv2.waitKey()
-        else:
-            compressed = cv2.imencode('.jpg', diff, [cv2.IMWRITE_JPEG_QUALITY, 60])[1].tostring()
-        l = len(compressed)
-        #print(compressed)
-        i = 0
-        print(1, time.time())
-        try:
-            while i < l:
-                ma = min(i+1024, l)
-                s2.send(compressed[i:ma])
-                i = i + 1024
-            if n % 5 == 0:
-                s2.send(b'NEW')
-            else:
-                s2.send(b'BYE')
-        except socket.error:
-            connection = False
-        print(2, time.time())
-        img0 = np.copy(img)
-        n = n + 1
-        #time.sleep()
-	
+
+class SplitFrames(object):
+    def __init__(self, connection):
+        self.connection = connection
+        self.stream = io.BytesIO()
+        self.count = 0
+
+    def write(self, buf):
+        if buf.startswith(b'\xff\xd8'):
+            # Start of new frame; send the old one's length
+            # then the data
+            size = self.stream.tell()
+            if size > 0:
+                self.connection.write(struct.pack('<L', size))
+                self.connection.flush()
+                self.stream.seek(0)
+                self.connection.write(self.stream.read(size))
+                self.count += 1
+                self.stream.seek(0)
+        self.stream.write(buf)
+
 def set_speed(interval1, interval2):
     p1.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
     p1.ChangeFrequency(100000/(2000.0+interval1))
     p2.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
     p2.ChangeFrequency(100000/(2000.0+interval2))
-'''
-def get_IP(host_mac, port=5):
-    sbt = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    sbt.connect((host_mac, port))
-    while true:
-        data = sbt.recv(1024)
-        data = data.decode('utf-8').split(' ')
-        host_IP = data[0]
-        TCP_PORT = data[1]
-        UDP_PORT = data[2]
-        print("host_IP: "+host_IP)
-        message = client_IP + ' ' +  str(5005) + ' ' +  str(5006)
-        sbt.send(bytes(message, 'utf-8'))
-        return
-'''
 
-host_IP = '10.148.0.46'
+def data_recieved(data):
+    global host_IP
+    global flag
+    print(data)
+    host_IP = data
+    flag = False
+    
+def sendIP():
+	global flag
+	flag = True
+	c = BluetoothClient('B8:27:EB:2A:46:91', data_recieved, power_up_device=True)
+	while flag:
+		c.send(client_IP)
+		time.sleep(1)
+	c.disconnect()
+
+def stream(sock, connection):
+	try:
+		output = SplitFrames(connection)
+		with picamera.PiCamera(resolution=(320,240), framerate=30) as camera:
+			time.sleep(2)
+			start = time.time()
+			camera.start_recording(output, format='mjpeg', quality = 10)
+			print("camera_start")
+			camera.wait_recording(20)
+			camera.stop_recording()
+			# Write the terminating 0-length to the connection to let the
+			# server know we're done
+			connection.write(struct.pack('<L', 0))
+	finally:
+		connection.close()
+		sock.close()
+		finish = time.time()
+	print('Sent %d images in %d seconds at %.2ffps' % (
+		output.count, finish-start, output.count / (finish-start)))
+
 PORT1 = 5005
-PORT2 = 5008
 BUFFER_SIZE = 1024
-host_mac = '88:B1:11:67:6E:A1'
-connectin = False
-
+connected = True
 run = True
+sendIP()
+s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s1.bind((client_IP, PORT1))
+s1.setblocking(0)
+time.sleep(1)
+s2 = socket.socket()
+s2.connect((host_IP, 8000))
+connection = s2.makefile('wb')
+streamer = threading.Thread(target = stream, args = (s2, connection,))
+streamer.daemon = True
+streamer.start()
+
+t = 0
 while run:
-    try:
-        if not connectin:
-            print ("Starting connection")
-            s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s1.bind((client_IP, PORT1))
-            s1.setblocking(0)
-            s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s2.connect((host_IP, PORT2))
-            th = threading.Thread(target=sendImage)
-            th.daemon = True
-            th.start()
-            t = time.time()
-            connectin = True
-            
-        while True:
-            try:
-                data = s1.recv(BUFFER_SIZE)
-                data = data.decode('utf-8').split(' ')
-                set_speed(int(data[0]), int(data[1]))
-                t = time.time()
-            except BlockingIOError:
-                if time.time() > t+0.2:
-                    set_speed(150, 150)
-                    if not connectin:
-                        break
-                continue
-    except KeyboardInterrupt:
-        run = False
-    except:
-        connectin = False
+	try:
+		while True:
+			try:
+				data = s1.recv(BUFFER_SIZE)
+				print(data)
+				data = data.decode('utf-8').split(' ')
+				set_speed(int(data[0]), int(data[1]))
+				t = time.time()
+			except BlockingIOError:
+				if time.time() > t+0.2:
+					set_speed(150, 150)
+					if not connected:
+						break
+						continue
+	except KeyboardInterrupt:
+		run = False
+
 	
 
 	

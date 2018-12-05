@@ -24,6 +24,8 @@ print("host_mac: "+host_mac)
 
 
 GPIO.setmode(GPIO.BCM)
+
+
 client_IP = '127.0.0.1'
 
 def data_recieved(data):
