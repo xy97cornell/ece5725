@@ -61,6 +61,7 @@ def camera_receive(socket, connection):
 		while True:
 			try:
 				data = connection.read(1024)
+				print("!!!")
 				if not data:
 					break
 				player.stdin.write(data)
@@ -115,7 +116,6 @@ code_running=True;
 while code_running:
 	
 	try:
-		ImageIO.read
 		
 		camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
 		camera.daemon = True
