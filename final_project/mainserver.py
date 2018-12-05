@@ -56,9 +56,10 @@ cam_connection = cam_server.accept()[0].makefile('rb')
 def camera_receive(socket, connection):
 	try:
 		#video = cv2.VideoCapture('tcp://192.168.137.246:8000/')
-		cmdline = ['mplayer', '-fps', '25', '-cache', '1024', '-']
+		cmdline = ['mplayer', '-fps', '25', '-cache', '128', '-']
 		player = subprocess.Popen(cmdline, stdin=subprocess.PIPE)
 		while True:
+			'''
 			try:
 				data = connection.read(1024)
 				print("!!!")
@@ -85,7 +86,7 @@ def camera_receive(socket, connection):
 			image = numpy.array(image).astype(numpy.uint8)
 			cv2.imshow('frame', image)
 			cv2.waitKey(1)
-			'''
+
 	finally:
 		connection.close()
 		socket.close()

@@ -25,6 +25,26 @@ result = result.stdout.decode('utf-8')
 client_IP = re.split(' |\n', result)[0]
 print("client_IP: "+client_IP)
 
+class SplitFrames(object):
+    def __init__(self, connection):
+        self.connection = connection
+        self.stream = io.BytesIO()
+        self.count = 0
+
+    def write(self, buf):
+        if buf.startswith(b'\xff\xd8'):
+            # Start of new frame; send the old one's length
+            # then the data
+            size = self.stream.tell()
+            if size > 0:
+                self.connection.write(struct.pack('<L', size))
+                self.connection.flush()
+                self.stream.seek(0)
+                self.connection.write(self.stream.read(size))
+                self.count += 1
+                self.stream.seek(0)
+        self.stream.write(buf)
+
 def set_speed(interval1, interval2):
     p1.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
     p1.ChangeFrequency(100000/(2000.0+interval1))
@@ -48,12 +68,13 @@ def sendIP():
 	c.disconnect()
 
 def stream(sock, connection):
-	while(True):
+	while(True)
 		try:
+			output = SplitFrames(connection)
 			with picamera.PiCamera(resolution=(320,240), framerate=15) as camera:
 				time.sleep(2)
 				start = time.time()
-				camera.start_recording(connection, format='h264', quality = 10)
+				camera.start_recording(output, format='jpeg', quality = 10)
 				print("camera_start")
 				camera.wait_recording(20)
 				camera.stop_recording()
@@ -105,11 +126,6 @@ while run:
 						continue
 	except KeyboardInterrupt:
 		run = False
-	
-		
-s1.close()
-s2.close()
-GPIO.cleanup()
 
 	
 
