@@ -65,11 +65,11 @@ def stream(sock, connection):
 			connection = s2.makefile('wb')
 			continue
 		finally:
-			connection.close()
-			sock.close()
+			#connection.close()
+			#sock.close()
 			finish = time.time()
-		print('Sent %d images in %d seconds at %.2ffps' % (
-			output.count, finish-start, output.count / (finish-start)))
+		#print('Sent %d images in %d seconds at %.2ffps' % (
+			#output.count, finish-start, output.count / (finish-start)))
 
 PORT1 = 5005
 BUFFER_SIZE = 1024

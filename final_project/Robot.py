@@ -63,12 +63,16 @@ class Robot:
 
     
 
-    def command(self, value_list):
+    def command(self, input_str):
         '''
         Values_List = 
         [forward, forward_magnitude, right, right_magnitude, left, left_magnitude, stop] 
         '''
-        
+        value_list = input_str.split(':')
+        stop = int(value_list[6])
+        forward = int(value_list[0])
+        forward_magnitude = int(value_list[1])
+        right = 
 
 
     def calibrate(self):
