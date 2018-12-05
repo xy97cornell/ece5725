@@ -12,10 +12,6 @@ from bluedot.btcomm import BluetoothClient, BluetoothAdapter
 import io
 import struct
 
-
-PORT1 = 5005
-BUFFER_SIZE = 1024
-
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
@@ -72,26 +68,29 @@ def sendIP():
 	c.disconnect()
 
 def stream(sock, connection):
-	try:
-		output = SplitFrames(connection)
-		with picamera.PiCamera(resolution=(320,240), framerate=30) as camera:
-			time.sleep(2)
-			start = time.time()
-			camera.start_recording(output, format='mjpeg', quality = 10)
-			print("camera_start")
-			camera.wait_recording(20)
-			camera.stop_recording()
-			# Write the terminating 0-length to the connection to let the
-			# server know we're done
-			connection.write(struct.pack('<L', 0))
-	finally:
-		connection.close()
-		sock.close()
-		finish = time.time()
-	print('Sent %d images in %d seconds at %.2ffps' % (
-		output.count, finish-start, output.count / (finish-start)))
-
-
+	while(True)
+		try:
+			output = SplitFrames(connection)
+			with picamera.PiCamera(resolution=(320,240), framerate=15) as camera:
+				time.sleep(2)
+				start = time.time()
+				camera.start_recording(output, format='h264', quality = 10)
+				print("camera_start")
+				camera.wait_recording(20)
+				camera.stop_recording()
+				# Write the terminating 0-length to the connection to let the
+				# server know we're done
+				#connection.write(struct.pack('<L', 0))
+		except socket.error:
+			s2.connect((host_IP, 8000))
+			connection = s2.makefile('wb')
+			continue
+		finally:
+			connection.close()
+			sock.close()
+			finish = time.time()
+		print('Sent %d images in %d seconds at %.2ffps' % (
+			output.count, finish-start, output.count / (finish-start)))
 
 PORT1 = 5005
 BUFFER_SIZE = 1024
@@ -100,7 +99,7 @@ run = True
 sendIP()
 s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s1.bind((client_IP, PORT1))
-#s1.setblocking(0)
+s1.setblocking(0)
 time.sleep(1)
 s2 = socket.socket()
 s2.connect((host_IP, 8000))
@@ -116,8 +115,8 @@ while run:
 			try:
 				data = s1.recv(BUFFER_SIZE)
 				print(data)
-				data = data.decode('utf-8')
-				#set_speed(int(data[0]), int(data[1]))
+				data = data.decode('utf-8').split(' ')
+				set_speed(int(data[0]), int(data[1]))
 				t = time.time()
 			except BlockingIOError:
 				if time.time() > t+0.2:
@@ -126,10 +125,6 @@ while run:
 						break
 						continue
 	except KeyboardInterrupt:
-		print("KeyboardInterrupt")
-		s2.close()
-		s1.close()
-		GPIO.cleanup()
 		run = False
 
 	

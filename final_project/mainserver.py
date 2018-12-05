@@ -56,7 +56,18 @@ cam_connection = cam_server.accept()[0].makefile('rb')
 def camera_receive(socket, connection):
 	try:
 		#video = cv2.VideoCapture('tcp://192.168.137.246:8000/')
+		cmdline = ['mplayer', '-fps', '25', '-cache', '1024', '-']
+		player = subprocess.Popen(cmdline, stdin=subprocess.PIPE)
 		while True:
+			try:
+				data = connection.read(1024)
+				if not data:
+					break
+				player.stdin.write(data)
+			except socket.error:
+				cam_connection = cam_server.accept()[0].makefile('rb')
+				continue
+			'''
 			# Read the length of the image as a 32-bit unsigned int. If the
 			# length is zero, quit the loop
 			image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
@@ -73,6 +84,7 @@ def camera_receive(socket, connection):
 			image = numpy.array(image).astype(numpy.uint8)
 			cv2.imshow('frame', image)
 			cv2.waitKey(1)
+			'''
 	finally:
 		connection.close()
 		socket.close()
@@ -103,9 +115,12 @@ code_running=True;
 while code_running:
 	
 	try:
+		ImageIO.read
+		
 		camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
 		camera.daemon = True
 		camera.start()
+		
 		while True:
 			pass
 		
