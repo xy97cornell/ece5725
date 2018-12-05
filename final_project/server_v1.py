@@ -8,8 +8,12 @@ import io
 import cv2
 import numpy
 import RPi.GPIO as GPIO
+import os
 from PIL import Image
 from bluedot.btcomm import BluetoothServer, BluetoothAdapter
+
+os.putenv('SDL_VIDEODRIVER','fbcon')
+os.putenv('SDL_FBDEV','/dev/dv1')
 
 COMMAND_PORT=5005
 CAM_PORT = 8000
@@ -39,7 +43,7 @@ def GPIO17_callback(channel):
     """
     interrupt handler for GPIO17; button on piTFT
     """
-    print "in interrupt 17"
+    print ("in interrupt 17")
     global buttonPressed, command
     buttonPressed = True
     command = 17
@@ -49,7 +53,7 @@ def GPIO22_callback(channel):
     """
     interrupt handler for GPIO22; button on piTFT
     """
-    print "in interrupt 22"
+    print ("in interrupt 22")
     global buttonPressed, command
     buttonPressed = True
     command = 22
@@ -59,7 +63,7 @@ def GPIO23_callback(channel):
     """
     interrupt handler for GPIO23; button on piTFT
     """
-    print "in interrupt 23"
+    print ("in interrupt 23")
     global buttonPressed, command
     buttonPressed = True
     command = 23
@@ -69,7 +73,7 @@ def GPIO27_callback(channel):
     """
     interrupt handler for GPIO27; button on piTFT
     """
-    print "in interrupt 27"
+    print ("in interrupt 27")
     global buttonPressed, command
     buttonPressed = True
     command = 27
@@ -78,7 +82,7 @@ def GPIO27_callback(channel):
 GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
 GPIO.add_event_detect(22, GPIO.FALLING, callback=GPIO22_callback, bouncetime=300)
 GPIO.add_event_detect(23, GPIO.FALLING, callback=GPIO23_callback, bouncetime=300)
-GPIO.add_event_detect(26, GPIO.FALLING, callback=GPIO27_callback, bouncetime=300)
+GPIO.add_event_detect(27, GPIO.FALLING, callback=GPIO27_callback, bouncetime=300)
 
 client_IP = '127.0.0.1'
 
@@ -128,7 +132,7 @@ def camera_receive(socket, connection):
 			cv2.imshow('frame', image)
 			cv2.waitKey(1)
 	finally:
-		connection.close()
+		connection.close()      
 		socket.close()
 
 def button_send(socket):
@@ -137,22 +141,22 @@ def button_send(socket):
         while True:
             if (buttonPressed):
                 buttonPressed = False
-                command_server.sendto(command, (client_IP, COMMAND_PORT))
+                socket.sendto(str(command).encode(), (client_IP, COMMAND_PORT))
 
     finally:
-        GPIO.cleanup()
+        socket.close()
 
 code_running=True
+camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
+camera.daemon = True
+camera.start()
+camera = threading.Thread(target=button_send, args=(command_server,))
+camera.daemon = True
+camera.start()
+
 while code_running:
     try:
-        camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
-        camera.daemon = True
-        camera.start()
-        camera = threading.Thread(target=button_send, args=(command_server))
-        camera.daemon = True
-        camera.start()
-        while True:
-            pass
+        time.sleep(0.5)
     except KeyboardInterrupt:
         print ("keyboard interrupt")
         code_running = False
