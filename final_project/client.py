@@ -12,6 +12,10 @@ from bluedot.btcomm import BluetoothClient, BluetoothAdapter
 import io
 import struct
 
+
+PORT1 = 5005
+BUFFER_SIZE = 1024
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
@@ -87,6 +91,8 @@ def stream(sock, connection):
 	print('Sent %d images in %d seconds at %.2ffps' % (
 		output.count, finish-start, output.count / (finish-start)))
 
+
+
 PORT1 = 5005
 BUFFER_SIZE = 1024
 connected = True
@@ -94,7 +100,7 @@ run = True
 sendIP()
 s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s1.bind((client_IP, PORT1))
-s1.setblocking(0)
+#s1.setblocking(0)
 time.sleep(1)
 s2 = socket.socket()
 s2.connect((host_IP, 8000))
@@ -110,8 +116,8 @@ while run:
 			try:
 				data = s1.recv(BUFFER_SIZE)
 				print(data)
-				data = data.decode('utf-8').split(' ')
-				set_speed(int(data[0]), int(data[1]))
+				data = data.decode('utf-8')
+				#set_speed(int(data[0]), int(data[1]))
 				t = time.time()
 			except BlockingIOError:
 				if time.time() > t+0.2:
@@ -120,6 +126,10 @@ while run:
 						break
 						continue
 	except KeyboardInterrupt:
+		print("KeyboardInterrupt")
+		s2.close()
+		s1.close()
+		GPIO.cleanup()
 		run = False
 
 	
