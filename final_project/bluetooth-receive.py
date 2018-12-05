@@ -6,8 +6,8 @@ incoming RFCOMM serial data
 from bluedot.btcomm import BluetoothClient
 from time import time
 
-#device = "B8:27:EB:D7:93:42" #rpi2 bluetooth device to pair
-device = "7C:B0:C2:AC:16:7D" #Xiaoyu's computer
+device = "B8:27:EB:D7:93:42" #rpi2 bluetooth device to pair
+#device = "7C:B0:C2:AC:16:7D" #Xiaoyu's computer
 
 adapter = BluetoothAdapter()
 print("Powered = {}".format(adapter.powered))
