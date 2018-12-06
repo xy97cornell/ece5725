@@ -10,6 +10,8 @@ import struct
 import io
 import cv2
 import numpy
+import traceback
+            
 from PIL import Image
 from bluedot.btcomm import BluetoothServer, BluetoothAdapter
 
@@ -51,13 +53,16 @@ cam_server = socket.socket()
 cam_server.bind((host_IP, CAM_PORT))
 cam_server.listen(0)
 # Accept a single connection and make a file-like object out of it
-cam_connection = cam_server.accept()[0].makefile('rb')
-
-def camera_receive(socket, connection):
+cam_connection = cam_server.accept()[0]
+#cam_connection.settimeout(20)
+connection = cam_connection.makefile('rb')
+def camera_receive(sock, connection):
 	try:
 		#video = cv2.VideoCapture('tcp://192.168.137.246:8000/')
+		'''
 		cmdline = ['mplayer', '-fps', '25', '-cache', '128', '-']
 		player = subprocess.Popen(cmdline, stdin=subprocess.PIPE)
+		'''
 		while True:
 			'''
 			try:
@@ -81,15 +86,25 @@ def camera_receive(socket, connection):
 			image_stream.write(connection.read(image_len))
 			# Rewind the stream, open it as an image with PIL and do some
 			# processing on it
+			
 			image_stream.seek(0)
 			image = Image.open(image_stream)
+		
+			
 			image = numpy.array(image).astype(numpy.uint8)
 			cv2.imshow('frame', image)
 			cv2.waitKey(1)
-
+			
+	except:
+		print('disconnected')
+		sock.listen(0)
+		cam_connection = sock.accept()[0]
+		cam_connection.settimeout(20)
+		connection = cam_connection.makefile('rb')
+		
 	finally:
 		connection.close()
-		socket.close()
+		sock.close()
 
 def key_board_poll():
 	#keyboard input
@@ -118,7 +133,7 @@ while code_running:
 	
 	try:
 		
-		camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
+		camera = threading.Thread(target=camera_receive, args=(cam_server,connection))
 		camera.daemon = True
 		camera.start()
 		
@@ -126,6 +141,7 @@ while code_running:
 			pass
 		
 	except KeyboardInterrupt:
+		traceback.print_exc()
 		code_running = False
 		
 

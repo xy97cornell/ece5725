@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO 
 import time
 
-
 IDLE = 0
 START = 1
 
@@ -61,18 +60,18 @@ class Robot:
         self.right_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T)*100)
         self.right_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
 
-    
-
+    def set_speed(self, interval1, interval2):
+		p1.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
+		p1.ChangeFrequency(100000/(2000.0+interval1))
+		p2.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
+		p2.ChangeFrequency(100000/(2000.0+interval2))
+	
     def command(self, input_str):
         '''
         Values_List = 
-        [forward, forward_magnitude, right, right_magnitude, left, left_magnitude, stop] 
+        [heading,roll,pitch] 
         '''
-        value_list = input_str.split(':')
-        stop = int(value_list[6])
-        forward = int(value_list[0])
-        forward_magnitude = int(value_list[1])
-        right = 
+        
 
 
     def calibrate(self):
@@ -97,16 +96,11 @@ class Robot:
 	
 
 
-'''def set_speed(interval1, interval2):
-    p1.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
-    p1.ChangeFrequency(100000/(2000.0+interval1))
-    p2.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
-    p2.ChangeFrequency(100000/(2000.0+interval2))
-'''
-
 
 if __name__=='__main__':
 	
 	robot = Robot()
-	robot.calibrate()
+	
+	
+	#robot.calibrate()
 	robot.shutdown()
