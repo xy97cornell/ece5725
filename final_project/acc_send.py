@@ -3,7 +3,7 @@ import time
 import socket
 import RPi.GPIO as GPIO
 
-client_IP = '10.148.0.210'
+client_IP = '10.148.4.162'
 PORT1 = 5000
 
 GPIO.setmode(GPIO.BCM)
