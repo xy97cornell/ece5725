@@ -7,7 +7,7 @@ import re
 import time
 import threading
 import cv2
-import numpy
+import numpy as np
 import requests
 from PIL import Image
 from bluedot.btcomm import BluetoothServer, BluetoothAdapter
@@ -24,7 +24,7 @@ result = result.stdout.decode('utf-8')
 host_mac = re.split(' |\n|\t', result)[2]
 print("host_mac: "+host_mac)
 
-client_IP = '127.0.0.1'
+client_IP = '10.148.4.162'
 
 def data_recieved(data):
 	global client_IP
@@ -47,23 +47,29 @@ COMMAND_PORT=5005
 CAM_PORT = 8000
 BUFFER_SIZE = 1024
 get_ip()
+time.sleep(2)
 command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 def camera_receive(client_IP):
-	r= requests.get('http://' + client_IP + ':8000', stream=True)
-	if(r.status_code == 200):
-		bytes1 = bytes()
-		for chunk in r.iter_content(chunk_size=1024):
-			bytes1 += chunk
-			a = bytes1.find(b'\xff\xd8')
-			b = bytes1.find(b'\xff\xd9')
-			if a != -1 and b != -1:
-				jpg = bytes1[a:b+2]
-				bytes1 = bytes1[b+2:]
-				i = cv2.imencode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-				cv2.imshow('FRAME', i)
-				cv2.waitKey(0)
+	while True:
+		try: 
+			r= requests.get('http://' + client_IP + ':8000', stream=True)
+			if(r.status_code == 200):
+				bytes1 = bytes()
+				for chunk in r.iter_content(chunk_size=1024):
+					bytes1 += chunk
+					a = bytes1.find(b'\xff\xd8')
+					b = bytes1.find(b'\xff\xd9')
+					if a != -1 and b != -1:
+						jpg = bytes1[a:b+2]
+						bytes1 = bytes1[b+2:]
+						i = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+						cv2.imshow('FRAME', i)
+						cv2.waitKey(1)
+		except Exception as e:
+			print("error :{}".format(e))
+			time.sleep(1)
 
 def key_board_poll():
 	#keyboard input
@@ -85,21 +91,16 @@ def key_board_poll():
 			message = str(170) + ' ' + str(130)
 			command_server.sendto(message.encode(), (client_IP, COMMAND_PORT))
 	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)    
-
-
+th = threading.Thread(target=camera_receive, args=(client_IP,))
+th.setDaemon = True
+th.start()
+#camera_receive(client_IP)
 code_running=True;
 while code_running:
+	pass
 	
-	try:
-		
-		camera_receive(client_IP)
-
-		
-		while True:
-			pass
-		
-	except KeyboardInterrupt:
-		code_running = False
+	#except KeyboardInterrupt:
+	#	code_running = False
 		
 
 

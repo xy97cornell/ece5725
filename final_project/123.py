@@ -16,4 +16,4 @@ if(r.status_code == 200):
             bytes = bytes[b+2:]
             i = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
             cv2.imshow('i', i)
-            cv2.waitKey(0)
+            cv2.waitKey(1)

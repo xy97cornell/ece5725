@@ -61,40 +61,51 @@ class Robot:
         self.right_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
 
     def set_speed(self, interval1, interval2):
-		self.left_servo.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
-		self.left_servo.ChangeFrequency(100000/(2000.0+interval1))
-		self.right_servo.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
-		self.right_servo.ChangeFrequency(100000/(2000.0+interval2))
+		if interval1 !=-1:
+			self.left_servo.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
+			self.left_servo.ChangeFrequency(100000/(2000.0+interval1))
+		if interval1 != -1:
+			self.right_servo.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
+			self.right_servo.ChangeFrequency(100000/(2000.0+interval2))
 	
     def command(self, input_str):
         '''
         Values_List = 
-        [heading,roll,pitch] 
+        [heading,roll,pitch,turn] 
         '''
         data = input_str.split(':')
-        h = data[0]
-        r = data[1]
-        p = data[2]
-        threshold = 3
-        roll_max = 35
-        roll_min = -35
-        direction = 0 #forward
-        if r<-roll_min:
-			turn = -30
-		elif r>roll_max:
-			turn = 30
-		else:
-			turn = r
-		
-		if r<threshold:
-			direction = 1 #right
-		elif r>threshold:
-			direction = 2 #left
+        turn = data[3]
+        if valid: 
+			if turn:
+				h = data[0]
+				r = data[1]
+				p = data[2]
+				threshold = 3
+				roll_max = 50
+				roll_min = -50
+				direction = 0 #forward
+				if r<-roll_min:
+					turn = -30
+				elif r>roll_max:
+					turn = 30
+				else:
+					turn = r
+				
+				if r<threshold:
+					direction = 1 #right
+				elif r>threshold:
+					direction = 2 #left
+					
+				slopeCW = 1.0*((self.CCLKW_T-self.STOP_T)/(row_max-threshold))
+				slopeCCW  = 1.0*((self.CLKW_T-self.STOP_T)/(-1*(row_min-threshold)))
+				if direction == 1: #right
+					left = self.STOP_T + slopeCCW*(turn-threshold)
+				elif direction == 2:
+					right = self.CLKW_T + slopeCW*(turn-roll_min)
+				
 			
-		slopeCW = 1.0*((self.CCLKW_T-self.STOP_T)/(row_max-threshold))
-		slopeCCW  = 1.0*((self.CLKW_T-self.STOP_T)/(-1*(row_min-threshold)))
-		output = 
-        
+		else:
+			self.stop()
 
 
     def calibrate(self):
