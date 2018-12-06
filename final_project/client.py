@@ -12,6 +12,9 @@ from bluedot.btcomm import BluetoothClient, BluetoothAdapter
 import io
 import struct
 import traceback
+import socketserver
+from http import server
+from threading import Condition
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.OUT)
@@ -62,7 +65,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.wfile.write(frame)
                     self.wfile.write(b'\r\n')
             except Exception as e:
-				pass
+                pass
         else:
             self.send_error(404)
             self.end_headers()
@@ -93,16 +96,7 @@ def sendIP():
 		time.sleep(1)
 	c.disconnect()
 
-def stream():
-	with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
-		output = StreamingOutput()
-		camera.start_recording(output, format='mjpeg')
-		try:
-			address = ('', 8000)
-			server = StreamingServer(address, StreamingHandler)
-			server.serve_forever()
-		finally:
-			camera.stop_recording()
+
 
 PORT1 = 5005
 BUFFER_SIZE = 1024
@@ -113,24 +107,32 @@ s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s1.bind((client_IP, PORT1))
 s1.setblocking(0)
 
+camera = picamera.PiCamera(resolution='640x480', framerate=24)
+output = StreamingOutput()
+camera.start_recording(output, format='mjpeg')
+address = ('', 8000)
+server = StreamingServer(address, StreamingHandler)
+thread = threading.Thread(server.serve_forever())
+thread.setDaemon = True
+thread.start()
+
+
 t = 0
 while run:
-	try:
-		while True:
-			try:
-				data = s1.recv(BUFFER_SIZE)
-				print(data)
-				data = data.decode('utf-8').split(' ')
-				set_speed(int(data[0]), int(data[1]))
-				t = time.time()
-			except BlockingIOError:
-				if time.time() > t+0.2:
-					set_speed(150, 150)
-					if not connected:
-						break
-						continue
-	except KeyboardInterrupt:
-		run = False
+    while True:
+        try:
+            data = s1.recv(BUFFER_SIZE)
+            print(data)
+            data = data.decode('utf-8').split(' ')
+            set_speed(int(data[0]), int(data[1]))
+            t = time.time()
+        except BlockingIOError:
+            if time.time() > t+0.2:
+                set_speed(150, 150)
+                if not connected:
+                    break
+                    continue
+
 
 	
 
