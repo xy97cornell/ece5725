@@ -10,6 +10,7 @@ import struct
 import io
 import cv2
 import numpy
+import requests
 from PIL import Image
 from bluedot.btcomm import BluetoothServer, BluetoothAdapter
 
@@ -50,18 +51,19 @@ command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 def camera_receive(client_IP):
-	r= requests.get(client_IP + ':8000', stream=True)
+	r= requests.get('http://' + client_IP + ':8000', stream=True)
 	if(r.status_code == 200):
-		bytes = bytes()
+		bytes1 = bytes()
 		for chunk in r.iter_content(chunk_size=1024):
-		bytes += chunk
-		a = bytes.find(b'\xff\xd8')
-		b = bytes.find(b'\xff\xd9')
-		if a != -1 and b != -1:
-			jpg = bytes[a:b+2]
-			bytes = bytes[b+2:]
-			i = cv2('FRAME', i)
-			cv2.waitKey(0)
+			bytes1 += chunk
+			a = bytes1.find(b'\xff\xd8')
+			b = bytes1.find(b'\xff\xd9')
+			if a != -1 and b != -1:
+				jpg = bytes1[a:b+2]
+				bytes1 = bytes1[b+2:]
+				i = cv2.imencode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+				cv2.imshow('FRAME', i)
+				cv2.waitKey(0)
 
 def key_board_poll():
 	#keyboard input
@@ -90,9 +92,8 @@ while code_running:
 	
 	try:
 		
-		camera = threading.Thread(target=camera_receive, args=(client_IP,))
-		camera.daemon = True
-		camera.start()
+		camera_receive(client_IP)
+
 		
 		while True:
 			pass

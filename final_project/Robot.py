@@ -61,16 +61,39 @@ class Robot:
         self.right_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
 
     def set_speed(self, interval1, interval2):
-		p1.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
-		p1.ChangeFrequency(100000/(2000.0+interval1))
-		p2.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
-		p2.ChangeFrequency(100000/(2000.0+interval2))
+		self.left_servo.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
+		self.left_servo.ChangeFrequency(100000/(2000.0+interval1))
+		self.right_servo.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
+		self.right_servo.ChangeFrequency(100000/(2000.0+interval2))
 	
     def command(self, input_str):
         '''
         Values_List = 
         [heading,roll,pitch] 
         '''
+        data = input_str.split(':')
+        h = data[0]
+        r = data[1]
+        p = data[2]
+        threshold = 3
+        roll_max = 35
+        roll_min = -35
+        direction = 0 #forward
+        if r<-roll_min:
+			turn = -30
+		elif r>roll_max:
+			turn = 30
+		else:
+			turn = r
+		
+		if r<threshold:
+			direction = 1 #right
+		elif r>threshold:
+			direction = 2 #left
+			
+		slopeCW = 1.0*((self.CCLKW_T-self.STOP_T)/(row_max-threshold))
+		slopeCCW  = 1.0*((self.CLKW_T-self.STOP_T)/(-1*(row_min-threshold)))
+		output = 
         
 
 

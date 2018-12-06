@@ -6,11 +6,9 @@ client_IP = '10.148.0.210'
 PORT1 = 5000
 
 code_running = True
-command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 if __name__=='__main__':
 	while code_running:
-		
+		command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		accelerometer.bno_init()
 		try:
 			while True:
