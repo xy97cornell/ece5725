@@ -15,6 +15,7 @@ import traceback
 import socketserver
 from http import server
 from threading import Condition
+import Robot
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.OUT)
@@ -72,11 +73,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-def set_speed(interval1, interval2):
-    p1.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
-    p1.ChangeFrequency(100000/(2000.0+interval1))
-    p2.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
-    p2.ChangeFrequency(100000/(2000.0+interval2))
+
 
 def data_recieved(data):
     global host_IP
@@ -96,7 +93,7 @@ def sendIP():
 
 
 
-PORT1 = 5005
+PORT1 = 5000
 BUFFER_SIZE = 1024
 connected = True
 run = True
@@ -105,31 +102,34 @@ s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s1.bind((client_IP, PORT1))
 s1.setblocking(0)
 
-camera = picamera.PiCamera(resolution='640x480', framerate=24)
+camera = picamera.PiCamera(resolution=(240, 320), framerate=24)
 output = StreamingOutput()
 camera.start_recording(output, format='mjpeg')
 address = ('', 8000)
 server = StreamingServer(address, StreamingHandler)
-thread = threading.Thread(server.serve_forever())
+
+def func(server):
+    server.serve_forever()
+thread = threading.Thread(target=func, args=(server,))
 thread.setDaemon = True
 thread.start()
 
-
+robot = Robot.Robot()
 t = 0
 while run:
-    while True:
-        try:
-            data = s1.recv(BUFFER_SIZE)
-            print(data)
-            data = data.decode('utf-8').split(' ')
-            set_speed(int(data[0]), int(data[1]))
-            t = time.time()
-        except BlockingIOError:
-            if time.time() > t+0.2:
-                set_speed(150, 150)
-                if not connected:
-                    break
-                    continue
+    try:
+        data = s1.recv(BUFFER_SIZE)
+        data = data.decode('utf-8')
+        robot.command(data)
+        print(data)
+        t = time.time() + 1
+        
+    except BlockingIOError:
+        data = "0:0:0:0:0"
+        if time.time()>t:
+            robot.command(data)
+
+        
 
 
 	

@@ -33,7 +33,8 @@ class Robot:
         #self.right_servo = GPIO.PWM(self.RIGHT_SERVO_PIN, self.right_servo_freq)
         self.left_servo = GPIO.PWM(self.LEFT_SERVO_PIN, self.STOP_FREQ)
         self.right_servo = GPIO.PWM(self.RIGHT_SERVO_PIN, self.STOP_FREQ)
-        self.state = IDLE
+        self.left_servo.start(self.STOP_DC)
+        self.right_servo.start(self.STOP_DC)
 
     def stop(self):
         self.left_servo.ChangeDutyCycle(self.STOP_DC)
@@ -66,16 +67,16 @@ class Robot:
 
     def set_speed(self, interval1, interval2):
         if interval1 !=-1:
-            self.left_servo.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
-            self.left_servo.ChangeFrequency(100000/(2000.0+interval1))
+            self.left_servo.ChangeDutyCycle(interval1/(self.DOWN_T+interval1)*100)
+            self.left_servo.ChangeFrequency(1/(self.DOWN_T+interval1))
         if interval1 != -1:
-            self.right_servo.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
-            self.right_servo.ChangeFrequency(100000/(2000.0+interval2))
+            self.right_servo.ChangeDutyCycle(interval2/(self.DOWN_T+interval2)*100)
+            self.right_servo.ChangeFrequency(1/(self.DOWN_T+interval2))
 	
     def command(self, input_str):
         '''
         Values_List = 
-        [heading,roll,pitch,turn] 
+        [Valid,turn,heading,roll,pitch] 
         '''
         data = input_str.split(':')
         valid = int(data[0])
@@ -85,6 +86,8 @@ class Robot:
                 h = float(data[2])
                 r = float(data[3])
                 p = float(data[4])
+                
+                
                 
                 if r>180:
                     r-=360
@@ -97,7 +100,13 @@ class Robot:
                 
                 
                 
-                threshold = 3
+                threshold = 5
+                
+                if r<threshold and r>-threshold:
+                    r = 0
+                if p<threshold and p>-threshold:
+                    p = 0
+                
                 roll_max = 50
                 roll_min = -50
                 pitch_max = 50
