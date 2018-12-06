@@ -1,7 +1,7 @@
 import socket
 import Robot
 
-client_IP = '10.148.0.210'
+client_IP = '10.148.4.162'
 PORT1 = 5000
 BUFFER_SIZE = 1024
 
