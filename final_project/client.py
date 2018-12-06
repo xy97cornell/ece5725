@@ -66,9 +66,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.wfile.write(b'\r\n')
             except Exception as e:
                 pass
-        else:
-            self.send_error(404)
-            self.end_headers()
+
 
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
@@ -83,7 +81,7 @@ def set_speed(interval1, interval2):
 def data_recieved(data):
     global host_IP
     global flag
-    print(data)
+    print('host_IP: ' + data)
     host_IP = data
     flag = False
     

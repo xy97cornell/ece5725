@@ -6,13 +6,13 @@ import subprocess
 import re
 import time
 import threading
-import struct
-import io
 import cv2
 import numpy
 import requests
 from PIL import Image
 from bluedot.btcomm import BluetoothServer, BluetoothAdapter
+
+
 
 result = subprocess.run('hostname -I', stdout=subprocess.PIPE, shell=True)
 result = result.stdout.decode('utf-8')
