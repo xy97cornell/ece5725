@@ -79,13 +79,13 @@ def bno_poll():
     # Read the calibration status, 0=uncalibrated and 3=fully calibrated.
     sys, gyro, accel, mag = bno.get_calibration_status()
     # Print everything out.
-    print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
-          heading, roll, pitch, sys, gyro, accel, mag))
+    #print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
+         # heading, roll, pitch, sys, gyro, accel, mag))
     D_H = heading-zero_heading
     D_R = roll-zero_roll
     D_P = pitch-zero_pitch
-    print ("D_H = {0:0.2F} D_R = {1:0.2F} D_P={2:0.2F}".format(
-    D_H, D_R, D_P))
+    #print ("D_H = {0:0.2F} D_R = {1:0.2F} D_P={2:0.2F}".format(
+    #D_H, D_R, D_P))
     return (D_H, D_R, D_P)
 
 
