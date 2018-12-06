@@ -47,49 +47,21 @@ CAM_PORT = 8000
 BUFFER_SIZE = 1024
 get_ip()
 command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-cam_server = socket.socket()
-cam_server.bind((host_IP, CAM_PORT))
-cam_server.listen(0)
-# Accept a single connection and make a file-like object out of it
-cam_connection = cam_server.accept()[0].makefile('rb')
 
-def camera_receive(socket, connection):
-	try:
-		#video = cv2.VideoCapture('tcp://192.168.137.246:8000/')
-		cmdline = ['mplayer', '-fps', '25', '-cache', '128', '-']
-		player = subprocess.Popen(cmdline, stdin=subprocess.PIPE)
-		while True:
-			'''
-			try:
-				data = connection.read(1024)
-				print("!!!")
-				if not data:
-					break
-				player.stdin.write(data)
-			except socket.error:
-				cam_connection = cam_server.accept()[0].makefile('rb')
-				continue
-			'''
-			# Read the length of the image as a 32-bit unsigned int. If the
-			# length is zero, quit the loop
-			image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
-			if not image_len:
-				break
-			# Construct a stream to hold the image data and read the image
-			# data from the connection
-			image_stream = io.BytesIO()
-			image_stream.write(connection.read(image_len))
-			# Rewind the stream, open it as an image with PIL and do some
-			# processing on it
-			image_stream.seek(0)
-			image = Image.open(image_stream)
-			image = numpy.array(image).astype(numpy.uint8)
-			cv2.imshow('frame', image)
-			cv2.waitKey(1)
 
-	finally:
-		connection.close()
-		socket.close()
+def camera_receive(client_IP):
+	r= requests.get(client_IP + ':8000', stream=True)
+	if(r.status_code == 200):
+		bytes = bytes()
+		for chunk in r.iter_content(chunk_size=1024):
+		bytes += chunk
+		a = bytes.find(b'\xff\xd8')
+		b = bytes.find(b'\xff\xd9')
+		if a != -1 and b != -1:
+			jpg = bytes[a:b+2]
+			bytes = bytes[b+2:]
+			i = cv2('FRAME', i)
+			cv2.waitKey(0)
 
 def key_board_poll():
 	#keyboard input
@@ -118,7 +90,7 @@ while code_running:
 	
 	try:
 		
-		camera = threading.Thread(target=camera_receive, args=(cam_server,cam_connection))
+		camera = threading.Thread(target=camera_receive, args=(client_IP,))
 		camera.daemon = True
 		camera.start()
 		
