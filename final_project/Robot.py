@@ -20,6 +20,10 @@ class Robot:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.LEFT_SERVO_PIN, GPIO.OUT)
         GPIO.setup(self.RIGHT_SERVO_PIN, GPIO.OUT)
+        self.right = self.STOP_T
+        self.left  = self.STOP_T
+        self.for_r = self.CLKW_T
+        self.for_l = self.CCLKW_T
         #self.left_servo_freq = STOP_FREQ
         #self.right_servo_freq = STOP_FREQ
         #self.left_servo_dc = STOP_DC
@@ -61,12 +65,12 @@ class Robot:
         self.right_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
 
     def set_speed(self, interval1, interval2):
-		if interval1 !=-1:
-			self.left_servo.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
-			self.left_servo.ChangeFrequency(100000/(2000.0+interval1))
-		if interval1 != -1:
-			self.right_servo.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
-			self.right_servo.ChangeFrequency(100000/(2000.0+interval2))
+        if interval1 !=-1:
+            self.left_servo.ChangeDutyCycle(interval1/(2000.0+interval1)*100)
+            self.left_servo.ChangeFrequency(100000/(2000.0+interval1))
+        if interval1 != -1:
+            self.right_servo.ChangeDutyCycle(interval2/(2000.0+interval2)*100)
+            self.right_servo.ChangeFrequency(100000/(2000.0+interval2))
 	
     def command(self, input_str):
         '''
@@ -74,38 +78,74 @@ class Robot:
         [heading,roll,pitch,turn] 
         '''
         data = input_str.split(':')
-        turn = data[3]
+        valid = int(data[0])
         if valid: 
-			if turn:
-				h = data[0]
-				r = data[1]
-				p = data[2]
-				threshold = 3
-				roll_max = 50
-				roll_min = -50
-				direction = 0 #forward
-				if r<-roll_min:
-					turn = -30
-				elif r>roll_max:
-					turn = 30
-				else:
-					turn = r
-				
-				if r<threshold:
-					direction = 1 #right
-				elif r>threshold:
-					direction = 2 #left
-					
-				slopeCW = 1.0*((self.CCLKW_T-self.STOP_T)/(row_max-threshold))
-				slopeCCW  = 1.0*((self.CLKW_T-self.STOP_T)/(-1*(row_min-threshold)))
-				if direction == 1: #right
-					left = self.STOP_T + slopeCCW*(turn-threshold)
-				elif direction == 2:
-					right = self.CLKW_T + slopeCW*(turn-roll_min)
-				
+            turn = int(data[1])
+            if turn:
+                h = float(data[2])
+                r = float(data[3])
+                p = float(data[4])
+                
+                if r>180:
+                    r-=360
+                elif r<-180:
+                    r+=360
+                if p>180:
+                    p-=360
+                elif p<-180:
+                    p+=360
+                
+                
+                
+                threshold = 3
+                roll_max = 50
+                roll_min = -50
+                pitch_max = 50
+                pitch_min = -50
+                if r<roll_min:
+                    roll = roll_min
+                elif r>roll_max:
+                    roll = roll_max
+                else:
+                    roll = r
+                if p<pitch_min:
+                    pitch = pitch_min
+                elif p>pitch_max:
+                    pitch = pitch_max
+                else:
+                    pitch = p
+                
+                rslope = 0.0001/roll_max
+                pslope = 2*rslope
+                
+                
+                
+                left = self.left + rslope*roll - pslope * pitch
+                right = self.right + rslope*roll + pslope * pitch 
+                
+                if left>self.CCLKW_T:
+                    left = self.CCLKW_T
+                if right<self.CLKW_T:
+                    right = self.CLKW_T
+                
+                self.set_speed(left,right)
+                print ("left: "+str(left)+" right:"+str(right))
+                '''slope_right = 1.0*((self.CCLKW_T-self.right)/(threshold-roll_min))
+                slope_left  = 1.0*((self.left-self.CLKW_T)/(roll_max-threshold))
+                if direction == 1: #right
+                    right = self.CLKW_T + slope_right*(turn-threshold)
+                    left  = self.for_l
+                elif direction == 2: #left
+                    right = self.for_r
+                    left = self.CCLKW_T + slope_left*(turn-roll_min)
+                else:
+                    right = self.for_r
+                    left = self.for_l
+                print ("left: "+str(left)+" right:"+str(right))
+                self.set_speed(left, right)'''
 			
-		else:
-			self.stop()
+        else:
+            self.stop()
 
 
     def calibrate(self):

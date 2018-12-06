@@ -30,7 +30,7 @@ if __name__=='__main__':
 			while True:
 				h,r,p = accelerometer.bno_poll()
 				print ("r = ",r)
-				message = str(h)+":"+str(r)+":"+str(p)+":"+str(turn)
+				message = str(1)+":"+str(turn)+":"+str(h)+":"+str(r)+":"+str(p)
 				command_server.sendto(message.encode(), (client_IP, PORT1))
 				time.sleep(0.9)
 				
