@@ -22,8 +22,6 @@ class Robot:
         GPIO.setup(self.RIGHT_SERVO_PIN, GPIO.OUT)
         self.right = self.STOP_T
         self.left  = self.STOP_T
-        self.for_r = self.CLKW_T
-        self.for_l = self.CCLKW_T
         #self.left_servo_freq = STOP_FREQ
         #self.right_servo_freq = STOP_FREQ
         #self.left_servo_dc = STOP_DC
@@ -33,7 +31,7 @@ class Robot:
         #self.right_servo = GPIO.PWM(self.RIGHT_SERVO_PIN, self.right_servo_freq)
         self.left_servo = GPIO.PWM(self.LEFT_SERVO_PIN, self.STOP_FREQ)
         self.right_servo = GPIO.PWM(self.RIGHT_SERVO_PIN, self.STOP_FREQ)
-        self.state = IDLE
+
 
     def stop(self):
         self.left_servo.ChangeDutyCycle(self.STOP_DC)
