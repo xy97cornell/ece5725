@@ -134,8 +134,7 @@ def camera_receive(client_IP):
 						jpg = bytes1[a:b+2]
 						bytes1 = bytes1[b+2:]
 						image = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-						res = cv2.resize(image, dsize=(240, 320
-						), interpolation=cv2.INTER_CUBIC)
+						image = np.flip(image, axis=1)
 		except Exception as e:
 			print("error :{}".format(e))
 			time.sleep(1)
@@ -192,7 +191,7 @@ while code_running:
 		else:	
 			pygame.surfarray.blit_array(surf, image.astype(np.int))
 			rect1 = surf.get_rect()
-			surf = pygame.transform.rotate(surf, 270)
+			surf = pygame.transform.rotate(surf, 90)
 			rect1.x = 0
 			rect1.y = 0
 			screen.blit(surf, rect1)
