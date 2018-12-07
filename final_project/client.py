@@ -15,7 +15,7 @@ import traceback
 import socketserver
 from http import server
 from threading import Condition
-import Robot
+import Robot #custom library
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.OUT)
@@ -25,7 +25,8 @@ p2 = GPIO.PWM(13, 100000/2150)
 p1.start(150/2150.0*100)
 p2.start(150/2150.0*100)
 
-result = subprocess.run('hostname -I', stdout=subprocess.PIPE, shell=True)
+result = subprocess.run('hostname -I', stdout=subprocess.PIPE, 
+shell=True)
 result = result.stdout.decode('utf-8')
 client_IP = re.split(' |\n', result)[0]
 print("client_IP: "+client_IP)
@@ -52,7 +53,8 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
             self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
+            self.send_header('Content-Type', 
+            'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             try:
                 while True:
@@ -76,6 +78,9 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 
 def data_recieved(data):
+    """
+    Callback function for bluetooth data received 
+    """
     global host_IP
     global flag
     print('host_IP: ' + data)
