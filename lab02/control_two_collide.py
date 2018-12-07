@@ -20,12 +20,19 @@ black = 0, 0, 0
 #BAIL OUT BUTTON
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def GPIO17_callback(channel):
     """Bail out button interrupt"""
     print "in interrupt 17"
     global code_running
     code_running = False
+    
+
+
+
 
 def elastic(speed1,speed2):
     """
@@ -40,6 +47,9 @@ def elastic(speed1,speed2):
 
 
 GPIO.add_event_detect(17,GPIO.FALLING,callback=GPIO17_callback,bouncetime=300)
+GPIO.add_event_detect(22,GPIO.FALLING,callback=GPIO22_callback,bouncetime=300)
+GPIO.add_event_detect(23,GPIO.FALLING,callback=GPIO23_callback,bouncetime=300)
+
 size = width, height = 320, 240
 BLACK = 0, 0, 0
 WHITE = 255,255,255

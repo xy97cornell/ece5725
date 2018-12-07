@@ -102,7 +102,7 @@ s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s1.bind((client_IP, PORT1))
 s1.setblocking(0)
 
-camera = picamera.PiCamera(resolution=(240, 320), framerate=24)
+camera = picamera.PiCamera(resolution=(320, 240), framerate=24)
 output = StreamingOutput()
 camera.start_recording(output, format='mjpeg')
 address = ('', 8000)
@@ -119,7 +119,10 @@ t = 0
 while run:
     try:
         data = s1.recv(BUFFER_SIZE)
+        
         data = data.decode('utf-8')
+
+            
         robot.command(data)
         print(data)
         t = time.time() + 1
@@ -127,7 +130,7 @@ while run:
     except BlockingIOError:
         data = "0:0:0:0:0"
         if time.time()>t:
-            robot.command(data)
+            robot.command(data) 
 
         
 

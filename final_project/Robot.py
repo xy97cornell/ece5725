@@ -64,6 +64,7 @@ class Robot:
         self.right_servo.ChangeFrequency(1/(self.CCLKW_T+self.DOWN_T))
 
     def set_speed(self, interval1, interval2):
+        print(str(interval1) + ' ' + str(interval2))
         if interval1 !=-1:
             self.left_servo.ChangeDutyCycle(interval1/(self.DOWN_T+interval1)*100)
             self.left_servo.ChangeFrequency(1/(self.DOWN_T+interval1))
@@ -74,7 +75,7 @@ class Robot:
     def command(self, input_str):
         '''
         Values_List = 
-        [Valid,turn,heading,roll,pitch] 
+        [Valid,turn,heading,roll,pitch,bluetooth] 
         '''
         data = input_str.split(':')
         valid = int(data[0])
@@ -150,6 +151,8 @@ class Robot:
                     left = self.for_l
                 print ("left: "+str(left)+" right:"+str(right))
                 self.set_speed(left, right)'''
+            else:
+                self.stop()
 			
         else:
             self.stop()
