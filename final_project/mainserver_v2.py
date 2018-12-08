@@ -110,7 +110,6 @@ def data_received(data):
     """
     global client_IP
     global flag
-    global blue
     print("Got IP from Client! IP: "+ str(data))
     client_IP = data
     flag = False
@@ -157,7 +156,6 @@ def camera_receive(client_IP):
     Requests video feed from a server hosted by the Robot.
     Saves the images in an encoded array
     """
-    global code_running
     while code_running:
         try: 
             r= requests.get('http://' + client_IP + ':8000', stream=True,
@@ -196,7 +194,7 @@ def send_command():
     roll   : control robot direction
     pitch  : control robot speed and forward/backward movement
     """
-    global client_IP, COMMAND_PORT, turn, code_running,h,r,p
+    global h,r,p
     while code_running:
         command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         bno.bno_init()

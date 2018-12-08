@@ -14,7 +14,6 @@
 import RPi.GPIO as GPIO
 import socket
 import threading
-import bluetooth
 import cv2
 import numpy as np
 import picamera
@@ -24,7 +23,6 @@ import time
 from bluedot.btcomm import BluetoothClient, BluetoothAdapter
 import io
 import struct
-import traceback
 import socketserver
 from http import server
 from threading import Condition
