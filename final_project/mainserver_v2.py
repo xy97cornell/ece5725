@@ -1,7 +1,7 @@
 # mainserver_v2.py
 # 12/7/2018 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-# Final Project - Telepresence Robot
+# Final Project - Telepresence Vehicle
 #
 # Main control for the basestation. Handles communication with robot 
 # through bluetooth, then receives camera data from the robot. Also 

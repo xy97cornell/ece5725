@@ -1,7 +1,7 @@
 # bno.py
 # 12/7/2018 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-# Final Project - Telepresence Robot
+# Final Project - Telepresence Vehicle
 # Inspired from Adafruit_Python_BNO055 library
 #
 # Handler for reading BNO055 sensor data. We poll the sensor

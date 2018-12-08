@@ -1,7 +1,7 @@
 # client.py
 # 12/7/2018 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-# Final Project - Telepresence Robot
+# Final Project - Telepresence Vehicle
 #
 # Main control file for robot. Sends its IP address to the basestation 
 # and gets basestation IP address.

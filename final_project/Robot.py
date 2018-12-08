@@ -1,7 +1,7 @@
 # Robot.py
 # 12/7/2018 
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
-# Final Project - Telepresence Robot
+# Final Project - Telepresence Vehicle
 #
 # Robot class for controling the robot by setting the timings for
 # the GPIO pins. We also decode control messages from the basestation. 
@@ -44,8 +44,6 @@ class Robot:
         self.left_servo.ChangeFrequency(self.STOP_FREQ)
         self.right_servo.ChangeFrequency(self.STOP_FREQ)
     
-
-
     def forward(self):
         print("Moving forward")
         self.left_servo.ChangeDutyCycle(self.CCLKW_T/(self.CCLKW_T+self.DOWN_T)*100)
