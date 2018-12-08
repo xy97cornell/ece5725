@@ -95,8 +95,6 @@ class Robot:
                 r = float(data[3])
                 p = float(data[4])
                 
-                
-                
                 if r>180:
                     r-=360
                 elif r<-180:
@@ -105,8 +103,6 @@ class Robot:
                     p-=360
                 elif p<-180:
                     p+=360
-                
-                
                 
                 threshold = 5
                 
@@ -134,8 +130,6 @@ class Robot:
                 
                 rslope = 0.0001/roll_max
                 pslope = 2*rslope
-                
-                
                 
                 left = self.left_speed + rslope*roll - pslope * pitch
                 right = self.right_speed + rslope*roll + pslope * pitch 

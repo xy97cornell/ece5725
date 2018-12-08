@@ -179,7 +179,7 @@ def camera_receive(client_IP):
             print("error :{}".format(e))
             time.sleep(1)
 
-h = 0 #global for BNO055 data
+h = 0 #global variables for BNO055 data
 r = 0
 p = 0
 
@@ -223,7 +223,7 @@ t = 0
 turn_p = turn
 
 while code_running:
-	try:
+    try:
         surf = pygame.Surface((image.shape[0], image.shape[1]))	
         pygame.surfarray.blit_array(surf, image.astype(np.int))
         rect1 = surf.get_rect()
@@ -252,8 +252,8 @@ while code_running:
             rect = text_surface.get_rect(center=(160, 120))		 
             screen.blit(text_surface,rect)
         pygame.display.flip()
-	except KeyboardInterrupt:
-		code_running = False
+    except KeyboardInterrupt:
+        code_running = False
 		
 GPIO.cleanup()
 sys.exit(0)
