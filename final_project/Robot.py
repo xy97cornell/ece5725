@@ -79,7 +79,7 @@ class Robot:
     def command(self, input_str):
         '''
         Decodes message from the base station
-        Values_List = [Valid,turn,heading,roll,pitch,bluetooth] 
+        Values_List = [Valid,turn,heading,roll,pitch] 
         Parameter input_str: string of commands sent through UDP
         Moves robot if turn is 1
         Stops robot if turn or valid is 0

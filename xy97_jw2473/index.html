@@ -46,11 +46,11 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <!-- <li class="active"><a href="#">Home</a></li>-->
             <li><a href="#intro">Introduction</a></li>
             <li><a href="#obj">Project Objective</a></li>
+            <li><a href="#setup">Setup</a></li>
             <li><a href="#design">Design</a></li>
-            <li><a href="#drawings">Drawings</a></li>
             <li><a href="#testing">Testing</a></li>
             <li><a href="#result">Result</a></li>
             <li><a href='#conclusion'>Conclusion</a></li>
@@ -65,7 +65,7 @@
 
 
       <div class="starter-template">
-        <h1>Telepresence Robot</h1>
+        <h1>Telepresence Vehicle</h1>
         <p class="lead">Motion controlled vehicle with a camera!</p><br><p>A Project By Xiaoyu Yan (xy97) and Ji Wu (jw2473)</p>
       </div>
 
@@ -88,10 +88,26 @@
                             <img src="pics/IMG_1210.jpg"
                             width="560"/>
                             <font size="2">
-                              <figcaption> <b>Our Robot!</b>
+                              <figcaption> <b>Our Vehicle!</b>
                               </figcaption>
                             </font>
                           </figure>
+
+                        <p ALIGN=LEFT style="font-size:16px">
+                          For our final project, we build a vehicle system that can be controlled remotely as long as there is wifi. The vehicle has a built in camera that transmits the video feed to the user at a base station. The user uses motion control from the base station to remotely control the vehicle. This project was inspired by remote control drones and vehicles. We wanted a way to remotely control a vehicle when users don’t have sight of the vehicle. The concept for this project isn’t anything new; remote control vehicles and drones are already used today with radio control and onboard camera that connects to wifi. The uses of these devices are for exploration of environments too hostile or inaccessible to humans which involve both scientific and military explorations. While the development of autonomous vehicles is ongoing and their reliability is increasing every year, remote control vehicles can still find use today with a human in control for complicated or important tasks, especially if real time control is possible. This also avoids vehicle ethics which is another huge topic. 
+                          <br><br>
+                          We enjoyed working with the technology involved in working on a remote controlled vehicle from the ground
+                           up. As a result of this project, we were able to have a controller communicate with the vehicle by 
+exchanging IP addresses for requests over wifi. The controller contains a sensor that captures motion data for vehicle control 
+and then sends that data to the robot using socket UDP and wifi. The vehicle then receives commands transmitted from the 
+controller and move accordingly. The user can see through the vehicle with an onboard camera that host a video stream using wifi.
+ The stream is displayed on the controller in a user friendly way using Pygame. The system is robust enough to work with dynamic 
+ IP addresses given that the controller and robot both connect to the same wifi and already recognized the wifi. The video
+  stream can reconnect if wifi connection is temporarily broken. Due to its reliability on wifi to function, this vehicle can only
+   be used in locations with wifi connection, which is likely indoors. This system can have practical uses in helping disabled 
+   people to engage in <a href="https://metro.co.uk/2018/11/30/cafe-staffed-by-robots-controlled-by-paralysed-people-opens-its-doors-8194062/" >
+    physical tasks</a> remotely which can help increase employment of disabled people.
+</p>
             </p>
       </div>
 
@@ -99,42 +115,249 @@
 
       <div class="row">
           <div class="col-md-4" style="text-align:center;">
-          <img class="img-rounded" src="pics/1.jpg" alt="Generic placeholder image" width="240" height="240">
+          <img class="img-rounded" src="pics/IMG_1215.jpg" alt="Generic placeholder image" width="240" height="240">
           </div>
           <div class="col-md-8" style="font-size:18px;">
-          <h2>Project Objective:</h2>
+          <h2>Project Objectives:</h2>
           <ul>
-              <li>some important objectives.some important objectives.some important objectives.some important objectives.</li>
-                <li>some other important objectives.</li>
-            <li>some not-that-important objectives.</li>
+              <li>Get motion reading from accelerometer and send reading to another Raspberry Pi.
+                </li>
+                <li>Move vehicle according to accelerometer controls 
+                    </li>
+            <li>Send camera images from one Raspberry Pi to another with minimal latency.
+                </li>
+            <li>Implement a vehicle system that supports robust remote control and requires limited user setup. 
+
+                </li>
           </ul>
           </div>
       </div>
 
+
+
+<hr id='setup'>
+<div style="text-align:center;">
+    <h2>Project Setup</h2>
+<p ALIGN=LEFT style="font-size:16px">
+For this project, we used two Raspberry Pi 3B’s (RPi). One for the remote controller otherwise known as the base station and the other on the vehicle that serves as the vehicle “brain”. The project also requires additional peripherals such as:
+
+</p>
+
+<ol ALIGN=LEFT style="font-size:16px">
+        <li>RPi camera V2
+          </li>
+          <li>built-in bluetooth
+              </li>
+      <li>BNO055 Absolute Orientation sensor
+          </li>
+      <li>onboard wifi</li>
+      <li>PWM servos</li>
+    </ol>
+    <p ALIGN=LEFT style="font-size:16px">
+    The coding language for this project is Python 3.5.
+    Before any project, make sure that the RPi is updated by running. 
+    <br>
+    <code>Sudo apt-get update
+          <br>  Sudo apt-get upgrade
+            </code>
+            <br>
+This project was done on the Raspbian Linux Stretch version. However, the linux kernel updates constantly and the current version will change over time. 
+<br><br>
+The RPi camera library support can be downloaded using:
+<br>
+<code>sudo apt-get install python-picamera python3-picamera </code>
+<br>  
+We also want to enable the Picamera by using <code>sudo raspi-config</code> and enabling the Picamera in the settings.
+<br><br>
+To use the bluetooth on the RPi, we used the Blue Dot library handle communication between two RPi 3’s with built in bluetooth. They can be installed by entering:
+<br>
+<code>sudo apt install python3-dbus</code>
+<br>
+<code>sudo pip3 install bluedot</code>
+<br><br>
+We also made extensive use of RPI.GPIO library to generate PWM signals to control the servos and to receive input from buttons on the PiTFT. The can be installed using:
+<br><code>pip install RPi.GPIO</code> 
+<br>or
+<br><code>sudo apt-get install python-rpi.gpio python3-rpi.gpio</code>
+<br><br>The base station use Pygame to display camera feed. Pygame should already be installed on the RPi
+<br>To process the camera images and compress it on the server, we used opencv and numpy. 
+These libraries are also used to decode the camera feed on the receiving end and manipulate the feed. 
+They can be installed using:
+<br><code>pip install opencv-python</code>
+<br>or 
+<br><code>sudo apt-get install libopencv-dev python-opencv</code>
+<br><br>We used serial communications for sending data between the base station and the sensor. 
+We therefore must enable RPi’s serial interface by once again going to <code>raspi-config</code>.
+ In the same location, we also disabled console login using serial to prevent it from conflicting with our serial device. 
+
+ Next we install the BNO055 Adafruit library by using:
+<br>
+<pre ALIGN=LEFT><code>
+cd ~
+git clone https://github.com/adafruit/Adafruit_Python_BNO055.git
+cd Adafruit_Python_BNO055
+sudo python setup.py install
+</code>
+</pre>
+<p ALIGN=LEFT style="font-size:16px">
+This library greatly sped up our development with the BNO055 sensor and data gathering.</p>
+</p>
+</div>
+
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    .column {
+        float: left;
+        width: 50%;
+        padding: 5px;
+    }
+    
+    /* Clearfix (clear floats) */
+    .row::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+    </style>
+    </head>
+    <body>
+
     <hr id='design'>
-
-      <div style="text-align:center;">
+    
+      <div style="text-align:center;font-size:16px">
               <h2>Design</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+                <h4><b>Bluetooth IP Address Exchange</b></h4>
+              <p ALIGN=LEFT>
+                   
+                Initially, we expected to have a static IP for the controller so we can simply handle the requests from the controller side. However, sending packets to a specific public address is not permitted by the network of the college, so we turn to setting up all metadata over bluetooth when rebooting. Additionally, using wifi means that IP address can change per connection to said wifi which means that IP address from connection on one day may be different from connection on the next day. Thus, to avoid hardcoding the IP address of the RPI’s everytime we turn them on, we must explore ways to use any permanent properties of the RPi’s. 
+<br><br>
+Enter bluetooth and MAC address!  Each RPi comes with a permanent MAC address that we can use!
+<br><br>
+The Raspberry Pi 3b conveniently contains built in bluetooth which we can use to communicate between to RPi’s and send a string containing the IP address. To make this happen, we used the Python Blue Dot library. First we must pair the two RPi’s. This can be done in several ways: one way is using the bluetooth controller by running bluetoothtcl on the terminal and running discoverable on. The controller gives us the MAC address of the RPi we are using which we can use on the other RPi to pair. This can be done using connect mac address to pair the devices. One can use paired-devices to check if the pairing is successful.
+<br><br>
+Once the pairing is done, we can test if bluetooth works with sending a string using BluetoothServer and BluetoothClient classes. These classes use RFCOMM serial to send data to a server. We originally tried to use this communication method by using pyserial and then socket for bluetooth communication before we discovered this library which did what we envisioned.
+<br><br>
+To send IP’s, we first used Python’s subprocess library to send and record terminal commands to the RPi and then save the IP as a string. To get IP address, we used <code>hostname -I</code>. To get MAC address, we used <code>hcitool dev | grep hci0</code>, where hci0 is our bluetooth device. The Blue Dot library allows us to set up a client connecting to the specific MAC address of the server. This part is hardcoded where we ran the above command and obtained the MAC address. The vehicle will then attempt a connection to the server hosted by the base station and repeatedly send its IP address until it receives a response from the server. The response is the base station’s IP address. This is a blocking function where the system will not continue until messages are exchanged. Currently, we did not implement error checking so the bluetooth will unblock if any message is exchanged. 
+<br><br>
+This was a great solution suggested by our professor to get around the non static IP problem with wifi. Not needed to find IP and manually enter it for both the vehicle and base station means less maintenance on the user’s side to get this system started. Once the bluetooth is connected and IP addresses exchanged, we can completely shut off bluetooth and utilize wifi to send data between two RPi’s.
+<br><br>
+
+<div class="row" style="text-align: center">
+        <div class="column">
+          <img src="pics/blue.PNG" alt="Snow" style="width:50%"><font size="2">
+                <figcaption> <b>Bluetooth FSM for Base Station</b>
+                </figcaption>
+              </font>
+        </div>
+        <div class="column">
+          <img src="pics/blue2.PNG" alt="Forest" style="width:50%">
+          <font size="2">
+                <figcaption> <b>Bluetooth FSM for Vehicle</b>
+                </figcaption>
+        </div>
+
       </div>
-
-    <hr id='drawings'>
-
-      <div style="text-align:center;">
-              <h2>Drawings</h2>
-
+<p ALIGN=LEFT style="font-size: 16px">Above contains the state diagrams for bluetooth and IP exchange. If no response or messages, both 
+systems block and wait until messages recieved. The base station will get the message first and then send the response.</p>
+</p>        
               <figure ALIGN=CENTER>
-                    <img src="pics/bluetooth.gif"
-                    width="560"/>
-                    <font size="2">
-                      <figcaption> <b>Inital Startup of our System</b>
-                      </figcaption>
-                    </font>
-                  </figure>
+                <img src="pics/bluetooth.gif"
+                width="560"/>
+                <font size="2">
+                  <figcaption> <b>Inital Startup of our System</b>
+                  </figcaption>
+                </font>
+              </figure>
+<br>
+<p ALIGN=LEFT style="font-size: 16px">We also added a little GUI to show that the system is attempting to swap IP addresses. This helps
+user experience and allows us to see if the device is blocking on the bluetooth.</p>
 
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+<h4><b>BNO055 Absolute Orientation Sensor</b></h4>
+
+<figure ALIGN=CENTER>
+        <img src="pics/s2.PNG"
+        width="560"/>
+        <font size="2">
+          <figcaption> <b>Schematic of BNO055 Sensor to RPi</b>
+          </figcaption>
+        </font>
+      </figure>
+
+      <p ALIGN=LEFT style="font-size: 16px">  The BNO055 Absolute Orientation Sensor is a combination of sensors including an accelerometer, gyroscope, and magnetometer. The main reason we used the sensor was because we already own one and didn’t need to order it. One only needs the gyroscope to detect the turns of the steering wheel, thus cheaper alternatives are definitely available. The sensor itself abstracts many of the mathematics behind calculation of orientation. We used the sensor to poll for the movement of the steering wheel. Since the I2C communication with the RPi contains some glitches with clock stretching, we decided to use serial communication where we set the SDA pin as TX and SCL pin as RX. We then connect to the serial pins on the RPi. We use the default ‘/dev/serial0’ as our serial port. One problem was that attempted connection with the sensor sometimes fails and returns the error code. We never figured out the reason but we ultimately solved it by using a while and try loop that repeated attempts to connect and prints erros to the terminal for inspection instead of crashing the program. We simply read the registers on the device which contains the euler data which is contained at device address 0x1A. The library sends the serial read command as a series of bytes. 
+</p>
+
+<div class="row" style="text-align: center">
+        <div class="column">
+          <img src="pics/IMG_1217.jpg" alt="Snow" style="width:100%"><font size="2">
+                <figcaption> <b>Wiring of the BNO055 Sensor</b>
+                </figcaption>
+              </font>
+        </div>
+        <div class="column">
+          <img src="pics/IMG_1206.jpg" alt="Forest" style="width:100%">
+          <font size="2">
+                <figcaption> <b>Wiring of the BNO055 Sensor - Alternative View</b>
+                </figcaption>
+        </div>
+
       </div>
 
+
+<h3><b>Communication</b></h3>
+<h4><b>Motion Control</b></h4>
+
+<p ALIGN=LEFT style="font-size: 16px">
+</p>
+<div class="row" style="text-align: center">
+        <div class="column">
+          <img src="pics/IMG_1209.jpg" alt="Snow" style="width:100%"><font size="2">
+                <figcaption> <b>Wiring of the Servos</b>
+                </figcaption>
+              </font>
+        </div>
+        <div class="column">
+          <img src="pics/s1.PNG" alt="Forest" style="width:100%">
+          <font size="2">
+                <figcaption> <b>Schematic of Servos</b>
+                </figcaption>
+        </div>
+</div>
+<br>
+
+<h4><b>Realtime Streaming</b></h4>
+<p ALIGN=LEFT style="font-size: 16px">ss</p>
+
+
+
+<div class="row" style="text-align: center">
+        <div class="column">
+          <img src="pics/DiagramBaseStation.PNG" alt="Snow" style="width:100%"><font size="2">
+                <figcaption> <b>FSM for Base Station</b>
+                </figcaption>
+              </font>
+        </div>
+        <div class="column">
+          <img src="pics/DiagramForRobot.PNG" alt="Forest" style="width:90%">
+          <font size="2">
+                <figcaption> <b>FSM for Vehicle</b>
+                </figcaption>
+        </div>
+
+      </div>
+
+           
+</div>
+
+    
+
+              
     <hr id='testing'>
 
       <div style="text-align:center;">
@@ -159,9 +382,9 @@
 
     <hr id='code'>
 
-    <div class="row"  style="text-align:center;font-size:18px">
+    <div class="row"  style="text-align:center;font-size:16px">
             <h2>Code Appendix</h2>
-            <p style="text-align:left">
+            <p style="text-align: left;padding: 0px 30px;">
                 Here contains the main code used in the system. Throughout our project, we also created many 
                 modular files for testing
                 various parts of the system and just seeing if something works. 
@@ -169,7 +392,16 @@
                 <a href="https://github.com/xy97cornell/ece5725/tree/master/final_project">here</a>.  
             </p>
 
-<details><summary><I>Circuit Example (Click me)</I></summary>
+
+
+<details ><summary><I>Click to see client.py</I></summary></details>
+<details><summary><I>Click to see mainserver_v2.py</I></summary></details>
+
+<p style="text-align: left;padding: 0px 30px;">
+The below files are modules we made testing the sensor and robot. They were made into functions and imported to main files
+for usage. This shows the modularity of our code.</p>
+<details><summary><I>Click to see Robot.py</I></summary></details>
+<details><summary><I>Click to see bno.py</I></summary>
 <p>
       <code>
 <pre ALIGN=LEFT style='color:#000000;background:#ffffff;'> <span style='color:#800000; '>7</span>           <span style='color:#800000; '>4</span> <span style='color:#800000; '>3</span>          <span style='color:#800000; '>0</span>
@@ -258,9 +490,9 @@
       </div>
       <hr>
       <hr id='Acknowledge'>
-      <div style="font-size:18px">
+      <div style="font-size:16px">
           <h2>References</h2>
-          <p ALIGN=LEFT> Here are some references for the lab. We did a lot of research on the bluetooth and Pi camera and 
+          <p ALIGN=LEFT> Here are some references for the final project. We did a lot of research on the bluetooth and Pi camera and 
               plausiblity of our vision. 
 
           </p>
@@ -270,17 +502,20 @@
          <li> <a href="https://picamera.readthedocs.io/">PiCamera Documentation</a><br></li>
          <li> <a href="https://learn.adafruit.com/bno055-absolute-orientation-sensor-with-raspberry-pi-and-beaglebone-black/hardware">
             BNO055 RPi Serial Communication Setup and Library</a><br></li>
+         <li> <a href="https://github.com/adafruit/Adafruit_Python_BNO055">
+            BNO055 Python Library</a><br></li>
             <li> <a href="https://www.parallax.com/sites/default/files/downloads/900-00008-Continuous-Rotation-Servo-Documentation-v2.2.pdf">
                 Continuous Rotation Servo Documentation</a><br></li>  
                 <li>   <a href="http://www.pygame.org/docs/">Pygame Documentation</a></li>
                 <li>   <a href="https://docs.python.org/2/library/socket.html">Python Socket Documentation</a></li>
                 <li>   <a href="https://bluedot.readthedocs.io/en/latest/btcommapi.html">Bluedot Communication Documentation</a></li>
+                <li>   <a href="https://lifehacker.com/everything-you-need-to-set-up-bluetooth-on-the-raspberr-1768482065">Setting Up Bluetooth on RPi</a></li>
 
           </ol>
           
           
       </div>
-      <div style="font-size:18px">
+      <div style="font-size:16px">
           <h2>Acknowledgements</h2>
           <p ALIGN=LEFT> Special thanks to Prof. Skovira and the TA staffs for helping us during the labs and final project sections
               For this project, lab 1, 2, and 3 allowed us to easily set up the PiTFT and Pygame GUI on the PiTFT. We obtained

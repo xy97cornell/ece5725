@@ -7,7 +7,7 @@
 # and gets basestation IP address.
 # Receives and decodes commands from basestation and sets up a host 
 # server for the camera stream
-# Handles servo movement 
+# Handles servo movements to control robot movement 
 #
 
 
