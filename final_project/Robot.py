@@ -1,11 +1,22 @@
+# Robot.py
+# 12/7/2018 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Final Project - Telepresence Robot
+#
+# Robot class for controling the robot by setting the timings for
+# the GPIO pins. We also decode control messages from the basestation. 
+# 
+
+
 import RPi.GPIO as GPIO 
 import time
 
-IDLE = 0
-START = 1
-
 class Robot:
-	
+    """
+    Initializes the two servos using RPi.GPIO library to control GPIO. 
+    Handles the timing of the servos and sets the speed and rotation 
+    directions of the robot
+    """
 	
     LEFT_SERVO_PIN = 6
     RIGHT_SERVO_PIN = 13
@@ -15,20 +26,13 @@ class Robot:
     DOWN_T  = 0.02
     STOP_DC = STOP_T/(STOP_T+DOWN_T)*100 #cycle in percentage
     STOP_FREQ = 1/(STOP_T+DOWN_T)
-    
+
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.LEFT_SERVO_PIN, GPIO.OUT)
         GPIO.setup(self.RIGHT_SERVO_PIN, GPIO.OUT)
-        self.right = self.STOP_T
-        self.left  = self.STOP_T
-        #self.left_servo_freq = STOP_FREQ
-        #self.right_servo_freq = STOP_FREQ
-        #self.left_servo_dc = STOP_DC
-        #self.left_servo_dc = self.STOP_DC
-
-        #self.left_servo = GPIO.PWM(self.LEFT_SERVO_PIN, self.left_servo_freq)
-        #self.right_servo = GPIO.PWM(self.RIGHT_SERVO_PIN, self.right_servo_freq)
+        self.right_speed = self.STOP_T
+        self.left_speed  = self.STOP_T
         self.left_servo = GPIO.PWM(self.LEFT_SERVO_PIN, self.STOP_FREQ)
         self.right_servo = GPIO.PWM(self.RIGHT_SERVO_PIN, self.STOP_FREQ)
         self.left_servo.start(self.STOP_DC)
@@ -74,8 +78,13 @@ class Robot:
 	
     def command(self, input_str):
         '''
-        Values_List = 
-        [Valid,turn,heading,roll,pitch,bluetooth] 
+        Decodes message from the base station
+        Values_List = [Valid,turn,heading,roll,pitch,bluetooth] 
+        Parameter input_str: string of commands sent through UDP
+        Moves robot if turn is 1
+        Stops robot if turn or valid is 0
+        Decodes the robot speed and direction based on heading and
+        pitch
         '''
         data = input_str.split(':')
         valid = int(data[0])
@@ -128,8 +137,8 @@ class Robot:
                 
                 
                 
-                left = self.left + rslope*roll - pslope * pitch
-                right = self.right + rslope*roll + pslope * pitch 
+                left = self.left_speed + rslope*roll - pslope * pitch
+                right = self.right_speed + rslope*roll + pslope * pitch 
                 
                 if left>self.CCLKW_T:
                     left = self.CCLKW_T
@@ -138,19 +147,6 @@ class Robot:
                 
                 self.set_speed(left,right)
                 print ("left: "+str(left)+" right:"+str(right))
-                '''slope_right = 1.0*((self.CCLKW_T-self.right)/(threshold-roll_min))
-                slope_left  = 1.0*((self.left-self.CLKW_T)/(roll_max-threshold))
-                if direction == 1: #right
-                    right = self.CLKW_T + slope_right*(turn-threshold)
-                    left  = self.for_l
-                elif direction == 2: #left
-                    right = self.for_r
-                    left = self.CCLKW_T + slope_left*(turn-roll_min)
-                else:
-                    right = self.for_r
-                    left = self.for_l
-                print ("left: "+str(left)+" right:"+str(right))
-                self.set_speed(left, right)'''
             else:
                 self.stop()
 			
@@ -159,6 +155,10 @@ class Robot:
 
 
     def calibrate(self):
+        """
+        Calibrates the servo by setting the robot to move in all
+        four directions
+        """
         self.left_servo.start(self.STOP_DC)
         self.right_servo.start(self.STOP_DC)
         self.stop()
@@ -173,12 +173,6 @@ class Robot:
     
     def shutdown(self):
         GPIO.cleanup()
-	
-
-    def exit(self):
-        GPIO.cleanup()
-	
-
 
 
 if __name__=='__main__':
@@ -186,5 +180,5 @@ if __name__=='__main__':
 	robot = Robot()
 	
 	
-	#robot.calibrate()
+	robot.calibrate()
 	robot.shutdown()

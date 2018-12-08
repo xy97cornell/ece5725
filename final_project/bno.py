@@ -1,3 +1,16 @@
+# bno.py
+# 12/7/2018 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Final Project - Telepresence Robot
+#
+# Handler for reading BNO055 sensor data. We poll the sensor
+# for a combination of values such as sensor heading, roll,
+# and pitch. We also have a set zero function that provides
+# us a way to set the natural position values and send values
+# relative to those natural position values. 
+# 
+
+
 import logging
 import sys
 import time
@@ -16,6 +29,7 @@ bno = 0
 def GPIO17_callback(channel):
     """
     interrupt handler for GPIO17; button on piTFT
+    Changes to whether we are calibrating or not
     """
     print ("in interrupt 17")
     global is_calibrating
@@ -24,21 +38,29 @@ def GPIO17_callback(channel):
 GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
 
 def calibrate(bno):
+    """
+    Set up the natural position the sensor values by setting the global zero_heading, 
+    zero_roll and zero_pitch values. These are the natural position values.
+    """
     print("CALIBRATING")
     global zero_heading, zero_roll, zero_pitch
     while (is_calibrating):
         print("CALIBRATING")
         #bno.set_calibration(bno.get_calibration())
-        
+
         zero_heading, zero_roll, zero_pitch = bno.read_euler()
         sys, gyro, accel, mag = bno.get_calibration_status()
         # Print everything out.
-        print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
-              zero_heading, zero_roll, zero_pitch, sys, gyro, accel, mag))
+        print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} \
+        Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
+                zero_heading, zero_roll, zero_pitch, sys, gyro, accel, mag))
         time.sleep(1)
     
     
 def bno_init():
+    """
+    Initializes the BNO055 sensor. Handles when BNO connection fails.
+    """
     global bno
     bno = BNO055.BNO055(serial_port='/dev/serial0', rst=18)
 
@@ -71,6 +93,9 @@ def bno_init():
         
 
 def bno_poll():
+    """
+    Polls from BNO and also checks calibration values
+    """
     if is_calibrating:
         calibrate(bno)
     
@@ -79,7 +104,8 @@ def bno_poll():
     # Read the calibration status, 0=uncalibrated and 3=fully calibrated.
     sys, gyro, accel, mag = bno.get_calibration_status()
     # Print everything out.
-    #print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
+    #print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} \
+    # Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
          # heading, roll, pitch, sys, gyro, accel, mag))
     D_H = heading-zero_heading
     D_R = roll-zero_roll
@@ -100,7 +126,8 @@ if __name__ == '__main__':
         while True:
             try:
                 if not bno.begin():
-                    raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')    
+                    raise RuntimeError('Failed to initialize BNO055! \
+                    Is the sensor connected?')    
                 status, self_test, error = bno.get_system_status()
                 break
             except Exception as e:
@@ -128,7 +155,8 @@ if __name__ == '__main__':
                 # Read the calibration status, 0=uncalibrated and 3=fully calibrated.
                 sys, gyro, accel, mag = bno.get_calibration_status()
                 # Print everything out.
-                print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
+                print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} \
+                Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
                       heading, roll, pitch, sys, gyro, accel, mag))
                 D_H = heading-zero_heading
                 D_R = roll-zero_roll

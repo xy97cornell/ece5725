@@ -3,11 +3,9 @@
 # Xiaoyu Yan (xy97) and Ji Wu (jw2473)
 # Final Project - Telepresence Robot
 #
-# Main control for the basestation.
-# Handles communication with robot through
-# bluetooth, then receives camera data from 
-# the robot. Also displays the camera images 
-# to the PiTFT and any GUI.
+# Main control for the basestation. Handles communication with robot 
+# through bluetooth, then receives camera data from the robot. Also 
+# displays the camera images to the PiTFT and any GUI.
 # 
 
 
@@ -22,19 +20,16 @@ import numpy as np
 import requests
 from PIL import Image
 from bluedot.btcomm import BluetoothServer, BluetoothAdapter
-import accelerometer #custom module
+
 import RPi.GPIO as GPIO
 import pygame
 import os
+import bno #custom module
 
 os.putenv('SDL_VIDEODRIVER', 'fbcon') # Display on piTFT
 os.putenv('SDL_FBDEV', '/dev/fb1') 
 os.putenv('SDL_MOUSEDRV', 'TSLIB') #setup mouse in pygame
 os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen') #touchscreen as mouse
-pygame.init()
-pygame.mouse.set_visible(False)
-
-my_font = pygame.font.Font(None,30)
 
 
 
@@ -50,15 +45,17 @@ result = result.stdout.decode('utf-8')
 host_mac = re.split(' |\n|\t', result)[2]
 print("host_mac: "+host_mac)
 
-client_IP = '10.148.4.162'
+client_IP = '10.148.4.162' #default Client IP
 
 code_running = True
-bluetooth = True
 turn = 0
 
+#######GPIO CALLBACK FUNCTIONS (Interrupt Handlers)############
 def GPIO22_callback(channel):
     """
     interrupt handler for GPIO17; button on piTFT
+    Sets the control enabled bit for whether we are turning on 
+    motion controls on the robot
     """
     print ("in interrupt 22")
     global turn 
@@ -66,11 +63,17 @@ def GPIO22_callback(channel):
     
 
 def GPIO23_callback(channel):
+    """
+    Unused
+    """
     print ("in interrupt 23")
     
     
     
 def GPIO27_callback(channel):
+    """
+    Exits the program. Breakout button
+    """
     print ("in interrupt 27")
     global code_running
     code_running = False
@@ -92,43 +95,8 @@ size = 320,240
 screen = pygame.display.set_mode(size)
 pygame.init()
 
-
-def data_recieved(data):
-	global client_IP
-	global flag
-	global blue
-	print("Got IP from Client! IP: "+ str(data))
-	client_IP = data
-	flag = False
-
-def get_ip():
-	global flag, bluetooth
-	blue =  BluetoothServer(data_recieved, power_up_device=True)
-	flag = True
-	i = 0
-	while flag:
-		screen.fill((0,0,0))
-		mytext = "Connecting to Bluetooth"
-		
-		if(i==0):
-			mytext = mytext+'.'
-		elif (i==1):
-			mytext = mytext+'..'
-		elif (i==2):
-			mytext = mytext+'...'
-		else:
-			i=-1
-		i+=1
-		text_surface = my_font.render(mytext,True,(255,255,255))
-		text_surface = pygame.transform.rotate(text_surface,180)
-		rect = text_surface.get_rect(center=(160, 120))	
-		screen.blit(text_surface,rect)
-		
-		time.sleep(1)
-		pygame.display.flip()
-	blue.send(host_IP)
-	blue.stop()
-	bluetooth = False
+pygame.mouse.set_visible(False)
+my_font = pygame.font.Font(None,30)
 
 COMMAND_PORT=5000
 CAM_PORT = 8000
@@ -136,9 +104,58 @@ BUFFER_SIZE = 1024
 get_ip()
 time.sleep(2)
 
+def data_received(data):
+    """
+    Callback fuction for receiving bluetooth messages
+    """
+    global client_IP
+    global flag
+    global blue
+    print("Got IP from Client! IP: "+ str(data))
+    client_IP = data
+    flag = False
+
+def get_ip():
+    """
+    Receives sender IP through bluetooth
+    Relays its IP back to the sender using send's IP that was 
+    received
+    Also generates pygame GUI to inform user that we are looking
+    for bluetooth.
+    Blocks until one robot connects 
+    """
+    global flag
+    blue =  BluetoothServer(data_received, power_up_device=True)
+    flag = True
+    i = 0
+    while flag:
+        screen.fill((0,0,0))
+        mytext = "Connecting to Bluetooth"
+        
+        if(i==0):
+            mytext = mytext+'.'
+        elif (i==1):
+            mytext = mytext+'..'
+        elif (i==2):
+            mytext = mytext+'...'
+        else:
+            i=-1
+        i+=1
+        text_surface = my_font.render(mytext,True,(255,255,255))
+        text_surface = pygame.transform.rotate(text_surface,180)
+        rect = text_surface.get_rect(center=(160, 120))	
+        screen.blit(text_surface,rect)
+        
+        time.sleep(1)
+        pygame.display.flip()
+    blue.send(host_IP)
+    blue.stop()
+
+
 def camera_receive(client_IP):
     """
-    Requests video feed from a server hosted by the Robot
+    Requests video feed from a server hosted by the Robot.
+    Saves the images in an encoded array
     """
     global code_running
     while code_running:
@@ -182,10 +199,10 @@ def send_command():
     global client_IP, COMMAND_PORT, turn, code_running,h,r,p
     while code_running:
         command_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        accelerometer.bno_init()
+        bno.bno_init()
         try:
             while code_running:
-                h,r,p = accelerometer.bno_poll()
+                h,r,p = bno.bno_poll()
                 message = str(1)+":"+str(turn)+":"+str(h)+":"+str(r)+":"+str(p)
                 command_server.sendto(message.encode(), (client_IP, COMMAND_PORT))
                 time.sleep(0.3) #defines the period of when to check and send data
@@ -207,7 +224,7 @@ turn_p = turn
 
 while code_running:
 	try:
-		surf = pygame.Surface((image.shape[0], image.shape[1]))	
+        surf = pygame.Surface((image.shape[0], image.shape[1]))	
         pygame.surfarray.blit_array(surf, image.astype(np.int))
         rect1 = surf.get_rect()
         surf = pygame.transform.rotate(surf, 90)
@@ -234,7 +251,7 @@ while code_running:
             text_surface = pygame.transform.rotate(text_surface,180)
             rect = text_surface.get_rect(center=(160, 120))		 
             screen.blit(text_surface,rect)
-		pygame.display.flip()
+        pygame.display.flip()
 	except KeyboardInterrupt:
 		code_running = False
 		

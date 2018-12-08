@@ -1,3 +1,16 @@
+# client.py
+# 12/7/2018 
+# Xiaoyu Yan (xy97) and Ji Wu (jw2473)
+# Final Project - Telepresence Robot
+#
+# Main control file for robot. Sends its IP address to the basestation 
+# and gets basestation IP address.
+# Receives and decodes commands from basestation and sets up a host 
+# server for the camera stream
+# Handles servo movement 
+#
+
+
 import RPi.GPIO as GPIO
 import socket
 import threading
@@ -25,12 +38,18 @@ p2 = GPIO.PWM(13, 100000/2150)
 p1.start(150/2150.0*100)
 p2.start(150/2150.0*100)
 
+## Get IP address
 result = subprocess.run('hostname -I', stdout=subprocess.PIPE, 
 shell=True)
 result = result.stdout.decode('utf-8')
 client_IP = re.split(' |\n', result)[0]
 print("client_IP: "+client_IP)
 
+
+PORT1 = 5000
+BUFFER_SIZE = 1024
+connected = True
+run = True
 class StreamingOutput(object):
     def __init__(self):
         self.frame = None
@@ -77,7 +96,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 
 
-def data_recieved(data):
+def data_received(data):
     """
     Callback function for bluetooth data received 
     """
@@ -88,21 +107,24 @@ def data_recieved(data):
     flag = False
     
 def sendIP():
-	global flag
-	flag = True
-	c = BluetoothClient('B8:27:EB:2A:46:91', data_recieved, power_up_device=True)
-	while flag:
-		c.send(client_IP)
-		time.sleep(1)
-	c.disconnect()
+    """
+    Repeatedly sends the string containing IP address to target. 
+    Requires the MAC address of the target to be hardcoded.
+    Receives back IP address from target and saves it for UDP 
+    connection
+    Blocks until we connect with base station 
+    """
+    global flag
+    flag = True
+    c = BluetoothClient('B8:27:EB:2A:46:91', data_received, 
+    power_up_device=True)
+    while flag:
+        c.send(client_IP)
+        time.sleep(1)
+    c.disconnect()
 
-
-
-PORT1 = 5000
-BUFFER_SIZE = 1024
-connected = True
-run = True
 sendIP()
+### Connection good!! Start everything else
 s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s1.bind((client_IP, PORT1))
 s1.setblocking(0)
@@ -114,7 +136,12 @@ address = ('', 8000)
 server = StreamingServer(address, StreamingHandler)
 
 def func(server):
+    """
+    Threading function for hosting camera stream
+    """
     server.serve_forever()
+
+
 thread = threading.Thread(target=func, args=(server,))
 thread.setDaemon = True
 thread.start()
@@ -124,16 +151,13 @@ t = 0
 while run:
     try:
         data = s1.recv(BUFFER_SIZE)
-        
         data = data.decode('utf-8')
-
-            
         robot.command(data)
         print(data)
         t = time.time() + 1
         
     except BlockingIOError:
-        data = "0:0:0:0:0"
+        data = "0:0:0:0:0" #sends invalid data to stop robot
         if time.time()>t:
             robot.command(data) 
 
