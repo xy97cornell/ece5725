@@ -1,5 +1,6 @@
 
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -29,8 +30,38 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
+  
+    <style>
+            * {
+                box-sizing: border-box;
+            }
+            
+            .column {
+                float: left;
+                width: 50%;
+                padding: 5px;
+            }
+            .column3 {
+                float: left;
+                width: 33%;
+                padding: 5px;
+            }
+            
+            /* Clearfix (clear floats) */
+            .row::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+            </style>
+            <style>
+                    table, th, td {
+                        border: 1px solid rgb(7, 00, 255);
+                    }
+                </style>        
+</head>
 
+  
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -71,12 +102,12 @@
 
       <hr>
       <div class="center-block" >
-          <p>
-            <iframe width="640" height="360"  src="https://www.youtube-nocookie.com/embed/EladGMzbRYc" frameborder="0" 
+          
+            <iframe width="640" height="360"  src="https://www.youtube-nocookie.com/embed/EladGMzbRYc"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         
           <h4 style="text-align:center;">Demonstration Video</h4>
-        </p>
+        
       </div>
 
       <hr id="intro">
@@ -84,16 +115,14 @@
       <div style="text-align:center;">
               <h2>Introduction</h2>
               <p style="text-align: left;padding: 0px 30px;">
-                    <figure ALIGN=CENTER>
-                            <img src="pics/IMG_1210.jpg"
+                    <figure>
+                            <img src="pics/IMG_1210.jpg" alt="pics/1.jpg"
                             width="560"/>
-                            <font size="2">
-                              <figcaption> <b>Our Vehicle!</b>
-                              </figcaption>
-                            </font>
+                               <div> <b>Our Vehicle!</b>
+                               </div>
                           </figure>
 
-                        <p ALIGN=LEFT style="font-size:16px">
+                        <p style="font-size:16px;text-align: left">
                           For our final project, we build a vehicle system that can be controlled remotely as long as there is
                            wifi. The vehicle has a built in camera that transmits the video feed to the user at a base station. 
                            The user uses motion control from the base station to remotely control the vehicle. This project was 
@@ -118,7 +147,6 @@
    people to engage in <a href="https://metro.co.uk/2018/11/30/cafe-staffed-by-robots-controlled-by-paralysed-people-opens-its-doors-8194062/" >
     physical tasks</a> remotely which can help increase employment of disabled people.
 </p>
-            </p>
       </div>
 
     <hr id='obj'>
@@ -148,22 +176,24 @@
 <hr id='setup'>
 <div style="text-align:center;">
     <h2>Project Setup</h2>
-<p ALIGN=LEFT style="font-size:16px">
+<p style="font-size:16px;text-align: left">
 For this project, we used two Raspberry Pi 3B’s (RPi). One for the remote controller otherwise known as the base station and the other on the vehicle that serves as the vehicle “brain”. The project also requires additional peripherals such as:
 
 </p>
 
-<ol ALIGN=LEFT style="font-size:16px">
+<ol style="font-size:16px;text-align: left">
         <li>RPi camera V2
           </li>
-          <li>built-in bluetooth
+          <li>Built-in bluetooth
               </li>
       <li>BNO055 Absolute Orientation sensor
           </li>
-      <li>onboard wifi</li>
+      <li>Onboard wifi</li>
       <li>PWM servos</li>
     </ol>
-    <p ALIGN=LEFT style="font-size:16px">
+
+
+    <p style="font-size:16px;text-align: left">
     The coding language for this project is Python 3.5.
     Before any project, make sure that the RPi is updated by running. 
     <br>
@@ -202,54 +232,27 @@ We therefore must enable RPi’s serial interface by once again going to <code>r
 
  Next we install the BNO055 Adafruit library by using:
 <br>
-<pre ALIGN=LEFT><code>
-cd ~
-git clone https://github.com/adafruit/Adafruit_Python_BNO055.git
-cd Adafruit_Python_BNO055
+<code>
+cd ~<br>
+git clone https://github.com/adafruit/Adafruit_Python_BNO055.git<br>
+cd Adafruit_Python_BNO055<br>
 sudo python setup.py install
+
 </code>
-</pre>
-<p ALIGN=LEFT style="font-size:16px">
-This library greatly sped up our development with the BNO055 sensor and data gathering.</p>
+
 </p>
+<p style="font-size:16px;text-align: left">
+This library greatly sped up our development with the BNO055 sensor and data gathering.</p>
+
 </div>
-
-
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <style>
-    * {
-        box-sizing: border-box;
-    }
     
-    .column {
-        float: left;
-        width: 50%;
-        padding: 5px;
-    }
-    .column3 {
-        float: left;
-        width: 33%;
-        padding: 5px;
-    }
-    
-    /* Clearfix (clear floats) */
-    .row::after {
-        content: "";
-        clear: both;
-        display: table;
-    }
-    </style>
-    </head>
-    <body>
 
     <hr id='design'>
     
       <div style="text-align:center;font-size:16px">
               <h2>Design</h2>
                 <h4><b>Bluetooth IP Address Exchange</b></h4>
-              <p ALIGN=LEFT>
+              <p style="text-align: left">
                    
                 Initially, we expected to have a static IP for the controller so we can simply handle the requests from the controller side. However, sending packets to a specific public address is not permitted by the network of the college, so we turn to setting up all metadata over bluetooth when rebooting. Additionally, using wifi means that IP address can change per connection to said wifi which means that IP address from connection on one day may be different from connection on the next day. Thus, to avoid hardcoding the IP address of the RPI’s everytime we turn them on, we must explore ways to use any permanent properties of the RPi’s. 
 <br><br>
@@ -266,74 +269,69 @@ This was a great solution suggested by our professor to get around the non stati
 
 <div class="row" style="text-align: center">
         <div class="column">
-          <img src="pics/blue.PNG" alt="Snow" style="width:50%"><font size="2">
-                <figcaption> <b>Bluetooth FSM for Base Station</b>
-                </figcaption>
-              </font>
+          <img src="pics/blue.PNG" alt="Snow" style="width:50%">
+                <div><b>Bluetooth FSM for Base Station</b>
+                </div>
         </div>
         <div class="column">
           <img src="pics/blue2.PNG" alt="Forest" style="width:50%">
-          <font size="2">
-                <figcaption> <b>Bluetooth FSM for Vehicle</b>
-                </figcaption>
+         
+          <div> <b>Bluetooth FSM for Vehicle</b>
+                </div>
         </div>
 
-      </div>
-<p ALIGN=LEFT style="font-size: 16px">Above contains the state diagrams for bluetooth and IP exchange. If no response or messages, both 
+<p  style="font-size: 16px;text-align: left">Above contains the state diagrams for bluetooth and IP exchange. If no response or messages, both 
 systems block and wait until messages recieved. The base station will get the message first and then send the response.</p>
-</p>        
-              <figure ALIGN=CENTER>
-                <img src="pics/bluetooth.gif"
+     
+              <figure >
+                <img src="pics/bluetooth.gif" alt="pics/1.jpg"
                 width="560"/>
-                <font size="2">
-                  <figcaption> <b>Inital Startup of our System</b>
-                  </figcaption>
-                </font>
+                
+                   <div> <b>Inital Startup of our System</b>
+                   </div>
+                
               </figure>
 <br>
-<p ALIGN=LEFT style="font-size: 16px">We also added a little GUI to show that the system is attempting to swap IP addresses. This helps
+<p style="font-size: 16px;text-align: left">We also added a little GUI to show that the system is attempting to swap IP addresses. This helps
 user experience and allows us to see if the device is blocking on the bluetooth.</p>
 
 <h4><b>BNO055 Absolute Orientation Sensor</b></h4>
 
-<figure ALIGN=CENTER>
-        <img src="pics/s2.PNG"
+<figure >
+        <img src="pics/s2.PNG" alt="pics/1.jpg"
         width="560"/>
-        <font size="2">
-          <figcaption> <b>Schematic of BNO055 Sensor to RPi</b>
-          </figcaption>
-        </font>
+           <div> <b>Schematic of BNO055 Sensor to RPi</b>
+           </div>
       </figure>
 
-      <p ALIGN=LEFT style="font-size: 16px">  The BNO055 Absolute Orientation Sensor is a combination of sensors including an accelerometer, gyroscope, and magnetometer. The main reason we used the sensor was because we already own one and didn’t need to order it. One only needs the gyroscope to detect the turns of the steering wheel, thus cheaper alternatives are definitely available. The sensor itself abstracts many of the mathematics behind calculation of orientation. We used the sensor to poll for the movement of the steering wheel. Since the I2C communication with the RPi contains some glitches with clock stretching, we decided to use serial communication where we set the SDA pin as TX and SCL pin as RX. We then connect to the serial pins on the RPi. We use the default ‘/dev/serial0’ as our serial port. One problem was that attempted connection with the sensor sometimes fails and returns the error code. We never figured out the reason but we ultimately solved it by using a while and try loop that repeated attempts to connect and prints erros to the terminal for inspection instead of crashing the program. We simply read the registers on the device which contains the euler data which is contained at device address 0x1A. The library sends the serial read command as a series of bytes. 
+      <p style="font-size: 16px;text-align: left">  The BNO055 Absolute Orientation Sensor is a combination of sensors including an accelerometer, gyroscope, and magnetometer. The main reason we used the sensor was because we already own one and didn’t need to order it. One only needs the gyroscope to detect the turns of the steering wheel, thus cheaper alternatives are definitely available. The sensor itself abstracts many of the mathematics behind calculation of orientation. We used the sensor to poll for the movement of the steering wheel. Since the I2C communication with the RPi contains some glitches with clock stretching, we decided to use serial communication where we set the SDA pin as TX and SCL pin as RX. We then connect to the serial pins on the RPi. We use the default ‘/dev/serial0’ as our serial port. One problem was that attempted connection with the sensor sometimes fails and returns the error code. We never figured out the reason but we ultimately solved it by using a while and try loop that repeated attempts to connect and prints erros to the terminal for inspection instead of crashing the program. We simply read the registers on the device which contains the euler data which is contained at device address 0x1A. The library sends the serial read command as a series of bytes. 
 </p>
 
 <div class="row" style="text-align: center">
         <div class="column">
-          <img src="pics/IMG_1217.jpg" alt="Snow" style="width:100%"><font size="2">
-                <figcaption> <b>Wiring of the BNO055 Sensor</b>
-                </figcaption>
-              </font>
+          <img src="pics/IMG_1217.jpg" alt="Snow" style="width:100%">
+                 <div> <b>Wiring of the BNO055 Sensor</b>
+                 </div>
+
         </div>
         <div class="column">
           <img src="pics/IMG_1206.jpg" alt="Forest" style="width:100%">
-          <font size="2">
-                <figcaption> <b>Wiring of the BNO055 Sensor - Alternative View</b>
-                </figcaption>
+                 <div> <b>Wiring of the BNO055 Sensor - Alternative View</b>
+                 </div>
         </div>
 
       </div>
 
 
 <h3><b>Communication</b></h3>
-<p ALIGN=LEFT style="font-size: 16px">
+<p style="font-size: 16px; text-align: left">
 We have to handle two different means of communication for two peripherals. One for the getting vehicle camera stream to base station and the other for sending sensor data from base station to vehicle.
 <br>Considering that we are not going to remotely reboot the vehicle, we set up the vehicle as passive. The vehicle handles request from any IP address, which allows us to reconnect to it after the controller is down or the connection is lost.
 </p>
 
 <h4><b>Motion Control</b></h4>
 
-<p ALIGN=LEFT style="font-size: 16px">
+<p style="font-size: 16px; text-align: left">
 Since the control signal is lightweight and non-sensitive to packet loss, we used bare UDP sockets to send and receive control 
 signal. When power-on, the vehicle will keep listening for instructions from the controller. The vehicle decodes the message 
 from the UDP and then moves the servos according to the readings from the sensors. The message format is in the form of 
@@ -347,78 +345,82 @@ counterclockwise rotation (roll) and forward backward roll (pitch).
 <div class="row" style="text-align: center">
         <div class="column">
                 <img src="pics/steerr.PNG" alt="Forest" style="width:100%">
-                <font size="2">
-                      <figcaption> <b>Turning Right</b>
-                      </figcaption>
+                       <div> <b>Turning Right</b>
+                       </div>
               </div>    
     <div class="column">
-          <img src="pics/steerl.PNG" alt="Snow" style="width:100%"><font size="2">
-                <figcaption> <b>Turning Left</b>
-                </figcaption>
-              </font>
+          <img src="pics/steerl.PNG" alt="Snow" style="width:100%">
+                 <div> <b>Turning Left</b>
+                 </div>
         </div>
         
 </div>
-<p ALIGN=LEFT style="font-size: 16px">The above figures shows the general conttrol for turning.
+<p   style="font-size: 16px;text-align: left">The above figures shows the general control for turning.
     If our steering wheel rotates counterclockwise, our roll 
         value will increase, and vice versa. The pitch will increase on a forward roll and vice versa. We then need to map the roll and 
-        pitch values from the sensor to the servo PWM signals to generate the desired servo rotation speed.  
+        pitch values from the sensor to the servo PWM signals to generate the desired servo rotation speed. 
+        
+<br><br>We also set up a function to set the natural position of the steering wheel such that all the turning values will be 
+relative to the natural position. Where being at the natural position will essentially mean a rotation of zero.      
         </p>
 <br>
 <div class="row" style="text-align: center">
         <div class="column3">
                 
         <img src="pics/servo2.PNG" alt="Forest" style="width:100%">
-        <font size="2">
-                <figcaption> <b>Servo Clockwise</b>
-                </figcaption>
+        
+                 <div> <b>Servo Clockwise</b>
+                 </div>
         </div>
-        <div class="column3"><img src="pics/servo1.PNG" alt="Snow" style="width:100%"><font size="2">
-                <figcaption> <b>Servo Stop</b>
-                </figcaption>
-              </font>
+        <div class="column3"><img src="pics/servo1.PNG" alt="Snow" style="width:100%">
+                 <div> <b>Servo Stop</b>
+                 </div>
         </div>
         <div class="column3">
           <img src="pics/servo3.PNG" alt="Forest" style="width:100%">
-          <font size="2">
-                <figcaption> <b>Servo Counterclockwise</b>
-                </figcaption>
+         
+                 <div> <b>Servo Counterclockwise</b>
+                 </div>
         </div>
 </div>
-<p ALIGN=LEFT style="font-size: 16px">
+<p   style="font-size: 16px;text-align: left">
 As we done in lab 3, the servos uses a PWM communication with a amount of high period determining the rotation and speed of the servos with a 20ms low value. As shown in the figure above, we have a window of 0.4ms to control the servo rotation and speed. We therefore must map the values of the sensors to 0.4ms. Our range is smaller because we only take into account a turn up to 50 degrees to prevent the user from turning the steering too much. The ultimate result is a vector equation where we set the servo speed based on both the pitch value and roll value multiplied by a slope value which maps the sensor values to the PWM control window. For our robot, Counterclockwise rotation from left servo and clockwise rotation from right servo means forward while clockwise rotation from both servos mean moving left and counterclockwise rotation means left movement.  
+We don't use the raw readings from the sensor but instead use the sensor readings relative to the natural position of the 
+steering wheel which should always be set when the system initially starts.
 The general equation for calculating the servo movement based on all these information is:<br>
 <code >left_time = stop_time + rslope * roll - pslope * pitch</code><br>
      <code>   right_time = stop_time + rslope * roll + pslope * pitch </code><br>
      where stop time is 1.5ms and left_time and right_time are bounded into a value between 1.3 and 1.5. Pslope and rslope are 
      a function of the maximum pitch and roll values respectively where we map the range bounded by the max values to the 0.4ms range 
-     for the servo control. Through testing, we discovered that having pslope = 2 * rslope is actually better for control of the 
-     vehicle to prioritize moving forward as oppose to turning.
+     for the servo control. </p>
+
+          <p   style="font-size: 16px;text-align: left">
+     Through testing, we discovered that having pslope = 2 * rslope is actually better for control of the 
+     vehicle to prioritize moving forward as oppose to turning. 
 </p>
 
 
 <div class="row" style="text-align: center">
         <div class="column">
-          <img src="pics/IMG_1209.jpg" alt="Snow" style="width:100%"><font size="2">
-                <figcaption> <b>Wiring of the Servos</b>
-                </figcaption>
-              </font>
+          <img src="pics/IMG_1209.jpg" alt="Snow" style="width:100%">
+                 <div> <b>Wiring of the Servos</b>
+                 </div>
+
         </div>
         <div class="column">
           <img src="pics/s1.PNG" alt="Forest" style="width:100%">
-          <font size="2">
-                <figcaption> <b>Schematic of Servos</b>
-                </figcaption>
+                 <div> <b>Schematic of Servos</b>
+                 </div>
         </div>
 </div>
-<p ALIGN=LEFT style="font-size: 16px">Above is the wiring of the servos to the GPIO pins. We use a 1k resistor between the
+<p   style="font-size: 16px;text-align: left">Above is the wiring of the servos to the GPIO pins. We use a 1k resistor between the
 GPIO and servo control to keep the current down and as an extra safety measure even if the RPi has built in pull up resistors. 
 The switch facilitates testing and saves the energies of the AAA batteries that are mounted under the robot.</p>
 <br>
 
 
 <h4><b>Realtime Streaming</b></h4>
-<p ALIGN=LEFT style="font-size: 16px">
+<p   style="font-size: 16px;text-align: left">
 Our application requires minimum latency for video streaming in order for safety. We set up a simple HTTP server on the 
 vehicle which responds to any request with a stream of encoded image. The response starts with a header that specifies the 
 response as “no-cache” and the data type as “multipart”, followed by a endless stream of JPEG format images bounded by 
@@ -432,28 +434,46 @@ is triggered and tells the main loop to proceed.
 When the controller is getting the requested data stream, images are extracted from the content by searching for boundary patterns and decoded and displayed on the touch screen using pygame. To make the system robust, we handled timeout and broken pipe exception from the controller side by sending periodic requests for reconnection.
 <br><br>
 Before we turned to HTTP, we also tried using bare TCP protocol. However, the frame rate remained pretty low (around 3 - 5) no matter how we reduced the image size and bit rate. We suspect that the maximum number of requests from a single device that can be handled by the router is around 3-5 per second. So we cannot get over the limit by simply reducing the size of the response. In contrast, since HTTP protocol allows multipart type response, we can send a stream of many images without adding more work load to the router and thus increase the frame rate. For motion control there is a similar limit of 5 instructions per second. However, since it is already satisfying for out application, we did not set up a seperate server to handle the communication of instructions.
+<figure>
+        <img src="pics/IMG_1214.jpg" alt="pic/1.jpg"
+        width="560"/>
+           <div> <b>Sensor Readings and Display Camera Feed on PiTFT</b>
+           </div>
 
+      </figure>
+    
+
+<p   style="font-size: 16px;text-align: left">
+To display the camera stream on the PiTFT, we used the Pygame library that was set up from lab 2. We first use openCV to decode the
+image data and then save that image data as an numpy array. The Pygame library can display images from numpy arrays as a surface
+and after that we just blit the surface onto the workspace and display. We also displayed the sensor readings using Pygame.
+This part was easy given that we worked on it before in lab. We just had to blit the texts on top of the camera feed surface and 
+update the number every iteration of the loop. We also displayed messages to pop up to inform the user that he or she enable or
+disable
+vehicle controls. The GUI certainly allows a better user experience and can allow the use to see if the motion sensors are working
+and help judgement. 
 </p>
+
 
 
 
 <div class="row" style="text-align: center">
         <div class="column">
-          <img src="pics/DiagramBaseStation.PNG" alt="Snow" style="width:100%"><font size="2">
-                <figcaption> <b>FSM for Base Station</b>
-                </figcaption>
-              </font>
+          <img src="pics/DiagramBaseStation.PNG" alt="Snow" style="width:100%">
+                 <div> <b>FSM for Base Station</b>
+                 </div>
+
         </div>
         <div class="column">
           <img src="pics/DiagramForRobot.PNG" alt="Forest" style="width:90%">
-          <font size="2">
-                <figcaption> <b>FSM for Vehicle</b>
-                </figcaption>
+
+                 <div> <b>FSM for Vehicle</b>
+                 </div>
         </div>
 
       </div>
 
-      <p ALIGN=LEFT style="font-size: 16px">Above contains the control diagram for the entire system.
+      <p   style="font-size: 16px;text-align: left">Above contains the control diagram for the entire system.
     We can see that both have very similar initial structure but diverges after IP exchange. We execute multiple independent tasks
 in our system so we can perform these tasks in parallel using threads which can distribute the workload over multiple cores.
 <br><br>
@@ -462,17 +482,30 @@ results obtained by others. We did not need to implement any major synchronizati
 threads such that there is always one writer and reader. The only condition variable we used was for camera streaming.</p>           
 </div>
 
-
+</div>
 
     <hr id='testing'>
 
       <div style="text-align:center;">
               <h2>Testing</h2>
               
-<p style="text-align: left;padding: 0px 30px;">
+<p style="text-align: left;font-size: 16px">
+        We performed an incremental testing strategy for all our our peripherals where we first implement part of the functionality of the robot, test it, and make sure it passes all the tests before we add more functionalities. We also test that each peripheral work separately before integrating them together. Working versions of the code were saved and additional functions were added to new files instead of overriding code.  
+<br><br>
+We also did a lot of test on the motion control to best fit human intuition for driving. For example, we set up an activation threshold for our controller so that the vehicle will stop when the steering wheel is held in a natural way. Also we set the influence of  “driving” (roll-changing) operation to be double of the “turning” (pitch-changing) operation to make it easier to make turns while moving forward. For servo tests, we wrote functions in Robot.py that calibrate the servos by having the robot move forward, backwards, left, right, and stop. We have a switch on the vehicle that disconnects the power of the servo from the rest of the system. This allowed us to test the signals to the servos without actually moving the servos.  
+<br><br>
+To test the latency of our camera, we did some simple test such as moving images in front of the camera and see the latency. We also did a more objective test by seeing how many frames per second the robot was able to display. The test of latency can be shown in the video below. As distance between the vehicle and base station increases, the latency also increases. This appears for both remote control and camera feed. 
+</p>
+<iframe width="640" height="360" src="https://www.youtube.com/embed/HiY0g6ddt2g?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p style="text-align: left;font-size: 16px">
+Through testing, we discovered that due to poor wifi, the RPi’s have a tendency to disconnect from the wifi and swap to a 
+different wifi. This is a problem because our streaming and communications only work when the RPI’s share the same wifi network 
+and are also connected to wifi. We solved this by ensuring that there is only one eligible wifi at any given location. In the lab,
+ the RPI recognized RedRover and Cornell Guest. We removed Cornell Guest by going to <code>/etc/wpa_supplicant/wpa_supplicant.conf</code> 
+ and deleting the relevant network block. In the code, we added while and try except statements to have the thread try 
+ repeatedly to reconnect to the server and ignore any error from failure to connect.
 
 </p>
-              <iframe width="640" height="360" src="https://www.youtube.com/embed/HiY0g6ddt2g?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
       </div>
 
@@ -480,21 +513,36 @@ threads such that there is always one writer and reader. The only condition vari
 
       <div style="text-align:center;">
               <h2>Result</h2>
- <p style="text-align: left;padding: 0px 30px;">
-                </p>              
-                    </div>
+<p style="text-align: left;font-size: 16px">
+    The system was overall a success; we were able achieve all of the objectives established above and made a system that was robust to some failures such as wifi. One result that was only satisfactory was the camera latency (on a scale of 1 to 10, it would be a 6). While the latency was much better than when we initially tried with TCP socket, there were still clear lag spikes from wifi slowdowns. This problem is not necessarily implementation; part of the problem could be the RPi 3B’s wifi module. If we had more budget, we could have gotten a module with higher quality and bandwidth. An alternative is to just not use wifi for the base station and instead use ethernet which is much faster than wifi. Other solutions such as better processing of the images sent by the camera were all attempted during the work on the project but to no huge success. Overall, we were able to make progress in camera streaming considering how we were initially getting frame rates of no greater than 5 and not including lag spikes.
+<br><br>
+The sensor data to robot movement data path was a success but like the camera stream, it was also dependent on the network quality. However, the combination of low byte payload and UDP communication meant that the latency wasn’t too big even with poor network connections. An idea was to have the controls be done with radio but that would conflict with the idea that the robot was suppose to work indoors which is not optimal for radio communications due to obstruction. 
+
+</p></div>
 
 <hr id='conclusion'>
 <div style='text-align:center'>
 <h2>Conclusions</h2>
 
-<p ALIGN=LEFT style="font-size: 16px">
-We succeeded in building a robust plug-and-use remote driving system which handles latency and loss of connection. We achieved our goals even if the technologies we planned to use did not work out as expected. 
-<br><br>First, we tried out different types of wireless communication. Bluetooth is the first to be discarded and only used for transmitting metadata because of its limited range. Then we briefly used lora radio, which can cover over long range but has a narrow bandwidth and is not capable of video streaming. As for WiFi communication, which we finally used, bare UDP resulted in serious packet loss and bare TCP connection suffers from high latency and unstable framerate because each packet has to be re-routed. So our final choice is to set up an HTTP server on the vehicle, which perfectly works out with controlled latency and a stable framerate of 24 frames per second.
+<p   style="font-size: 16px;text-align: left">
+We succeeded in building a robust plug-and-use remote driving system which handles latency and loss of connection. We achieved 
+our goals even if the technologies we planned to use did not work out as expected. 
+<br><br>First, we tried out different types of wireless communication. Bluetooth is the first to be discarded and only used for 
+transmitting metadata because of its limited range. Then we briefly consider lora radio, which can cover over long range but has a 
+narrow bandwidth and is not capable of video streaming. As for WiFi communication, which we finally used, bare UDP resulted in
+ serious packet loss and bare TCP connection suffers from high latency and unstable framerate because each packet has to be
+  re-routed. We originally put in a lot of effort setting up the TCP socket camera streaming server. The reason we put a lot of 
+  effort was that it worked and was extremely promising with latency on a good wifi network being very low and we were able to 
+  get up to 20 FPS on a good wifi. However, later tests saw us struggle to even reach 5 FPS on the sending side. We tried many 
+  different methods such as changing the format of the video to .h264 instead of .mjpeg but to no success. TCP connection was 
+  certainly a solution to camera streaming but the latency was too great given the wifi and hardware we have. 
+  
+  Our final choice is to set up an HTTP server on the vehicle, which perfectly works out with controlled 
+  latency and a stable framerate of 24 frames per second.
 </p>
 <h4><b>Future Work</b></h4>
 
-<p ALIGN=LEFT style="font-size: 16px">
+<p   style="font-size: 16px;text-align: left">
 We would like to add a auto-driving mode for the vehicle so that it will try to return to the place it starts with 
 backtracking on its movement history after losing reconnection with the controller. Due to development on autonomous robots, we
 believe integrating automony is a natural next step for our vehicle. Another idea is to use openCV library for image processing
@@ -521,7 +569,7 @@ or microphones. The possibilities are limitless.
                 <a href="https://github.com/xy97cornell/ece5725/tree/master/final_project">here</a>.  
             </p>
 
-<!-- HTML generated using hilite.me --><div ALIGN=LEFT style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># client.py</span>
+<!-- HTML generated using hilite.me --><div   style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;text-align: left"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># client.py</span>
 <span style="color: #0099FF; font-style: italic"># 12/7/2018 </span>
 <span style="color: #0099FF; font-style: italic"># Xiaoyu Yan (xy97) and Ji Wu (jw2473)</span>
 <span style="color: #0099FF; font-style: italic"># Final Project - Telepresence Vehicle</span>
@@ -534,8 +582,8 @@ or microphones. The possibilities are limitless.
 <span style="color: #0099FF; font-style: italic">#</span>
 </pre></div>
     
-<details ALIGN=LEFT><summary><I>Click to see client.py</I></summary>
-<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+<details  ><summary><I>Click to see client.py</I></summary>
+<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; text-align: left;overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
 2
 3
 4
@@ -684,7 +732,7 @@ or microphones. The possibilities are limitless.
 147
 148
 149
-150</pre></td><td><pre ALIGN=LEFT style="margin: 0; line-height: 125%"><span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">RPi.GPIO</span> <span style="color: #006699; font-weight: bold">as</span> <span style="color: #00CCFF; font-weight: bold">GPIO</span>
+150</pre></td><td><pre   style="margin: 0; line-height: 125%"><span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">RPi.GPIO</span> <span style="color: #006699; font-weight: bold">as</span> <span style="color: #00CCFF; font-weight: bold">GPIO</span>
 <span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">socket</span>
 <span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">threading</span>
 <span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">cv2</span>
@@ -839,7 +887,7 @@ t <span style="color: #555555">=</span> <span style="color: #FF6600">0</span>
 </details>
 
 
-<!-- HTML generated using hilite.me --><div ALIGN=LEFT style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># mainserver_v2.py</span>
+<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; text-align: left;overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;text-align: left"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># mainserver_v2.py</span>
 <span style="color: #0099FF; font-style: italic"># 12/7/2018 </span>
 <span style="color: #0099FF; font-style: italic"># Xiaoyu Yan (xy97) and Ji Wu (jw2473)</span>
 <span style="color: #0099FF; font-style: italic"># Final Project - Telepresence Vehicle</span>
@@ -850,8 +898,8 @@ t <span style="color: #555555">=</span> <span style="color: #FF6600">0</span>
 <span style="color: #0099FF; font-style: italic"># </span>
 </pre></div>
     
-<details ALIGN=LEFT><summary><I>Click to see mainserver_v2.py</I></summary>
-<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+<details  ><summary><I>Click to see mainserver_v2.py</I></summary>
+<!-- HTML generated using hilite.me --><div style="background: #f0f3f3;text-align: left; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;text-align: left"><table><tr><td><pre style="margin: 0; line-height: 125%">1
 2
 3
 4
@@ -1350,7 +1398,7 @@ sys<span style="color: #555555">.</span>exit(<span style="color: #FF6600">0</spa
 The below files are modules we made testing the sensor and robot. They were made into functions and classes and imported to main files
 for usage. This shows the modularity of our code.</p>
 
-<!-- HTML generated using hilite.me --><div ALIGN=LEFT style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># Robot.py</span>
+<!-- HTML generated using hilite.me --><div   style="background: #f0f3f3;text-align: left; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># Robot.py</span>
 <span style="color: #0099FF; font-style: italic"># 12/7/2018 </span>
 <span style="color: #0099FF; font-style: italic"># Xiaoyu Yan (xy97) and Ji Wu (jw2473)</span>
 <span style="color: #0099FF; font-style: italic"># Final Project - Telepresence Vehicle</span>
@@ -1360,8 +1408,8 @@ for usage. This shows the modularity of our code.</p>
 <span style="color: #0099FF; font-style: italic"># </span>
 </pre></div>
     
-<details ALIGN=LEFT><summary><I>Click to see Robot.py</I></summary>
-<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+<details  ><summary><I>Click to see Robot.py</I></summary>
+<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; text-align: left;overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
 2
 3
 4
@@ -1697,7 +1745,7 @@ for usage. This shows the modularity of our code.</p>
 
 </details>
 
-<!-- HTML generated using hilite.me --><div ALIGN=LEFT style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># bno.py</span>
+<!-- HTML generated using hilite.me --><div   style="background: #f0f3f3;text-align: left; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #0099FF; font-style: italic"># bno.py</span>
 <span style="color: #0099FF; font-style: italic"># 12/7/2018 </span>
 <span style="color: #0099FF; font-style: italic"># Xiaoyu Yan (xy97) and Ji Wu (jw2473)</span>
 <span style="color: #0099FF; font-style: italic"># Final Project - Telepresence Vehicle</span>
@@ -1711,8 +1759,8 @@ for usage. This shows the modularity of our code.</p>
 <span style="color: #0099FF; font-style: italic"># </span>
 </pre></div>
     
-<details ALIGN=LEFT><summary><I>Click to see bno.py</I></summary>
-<!-- HTML generated using hilite.me --><div style="background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+<details  ><summary><I>Click to see bno.py</I></summary>
+<!-- HTML generated using hilite.me --><div style="background: #f0f3f3;text-align: left; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
 2
 3
 4
@@ -1944,14 +1992,11 @@ GPIO<span style="color: #555555">.</span>add_event_detect(<span style="color: #F
       </div>
 
     <hr>
+    
       <div style="font-size:18px">
           <h2>Parts List</h2>
-          <style>
-                table, th, td {
-                    border: 1px solid rgb(7, 00, 255);
-                }
-            </style>        
-            <table align="center">
+            <div>
+            <table style="margin: 0 auto">
             <tr>
                 <th style="background-color: yellow">Name</th>
                 <th style="background-color: yellow">Quanitiy</th>
@@ -1993,16 +2038,17 @@ GPIO<span style="color: #555555">.</span>add_event_detect(<span style="color: #F
 
             </tr>
             </table>
+        </div>
       </div>
       <hr>
       <hr id='Acknowledge'>
       <div style="font-size:16px">
           <h2>References</h2>
-          <p ALIGN=LEFT> Here are some references for the final project. We did a lot of research on the bluetooth and Pi camera and 
+          <p  style="text-align: left"> Here are some references for the final project. We did a lot of research on the bluetooth and Pi camera and 
               plausiblity of our vision. 
 
           </p>
-          <ol>
+          <ol class="row">
              <li>   <a href="https://pinout.xyz/">RPi Pins layout</a></li>
           <li><a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Documentation</a></li>
          <li> <a href="https://picamera.readthedocs.io/">PiCamera Documentation</a><br></li>
@@ -2023,27 +2069,24 @@ GPIO<span style="color: #555555">.</span>add_event_detect(<span style="color: #F
       </div>
       <div style="font-size:16px">
           <h2>Acknowledgements</h2>
-          <p ALIGN=LEFT> Special thanks to Prof. Skovira and the TA staffs for helping us during the labs and final project sections
+          <p  > Special thanks to Prof. Skovira and the TA staffs for helping us during the labs and final project sections
               For this project, lab 1, 2, and 3 allowed us to easily set up the PiTFT and Pygame GUI on the PiTFT. We obtained
             the background to control the servos from lab 3. Overall, this class was entertaining and we learned a lot about embedded
         operating systems through the Raspberry Pi and using it as a more powerful alternative to microcontroller based 
         embedded systems.</p>
         <a href="http://skovira.ece.cornell.edu/ece5725/">Class Website</a>
       </div>
-
-   
-
+      <div class="row" style="text-align:center;">
+            <br>─▄▒▒▒▒▒▒─▄▒▒▄▒▒─▄▒▒▄▒▒
+            <br>─▀▀█▒▒▀──█▒▒▒▒▒─▀█▒▒▒
+            <br>───█▒▒───█▒▒█▒▒─▄▒▒█▒▒
+            <br>───▀▀────▀▀─▀▀──▀▀─▀▀─
+            <br>
+              
+      </div>
+      
     </div><!-- /.container -->
-
-    <div class="row" style="text-align:center;">
-      <br>─▄▒▒▒▒▒▒─▄▒▒▄▒▒─▄▒▒▄▒▒
-      <br>─▀▀█▒▒▀──█▒▒▒▒▒─▀█▒▒▒
-      <br>───█▒▒───█▒▒█▒▒─▄▒▒█▒▒
-      <br>───▀▀────▀▀─▀▀──▀▀─▀▀─
-      <br>
-        
-</div>
-
+    
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -2053,5 +2096,5 @@ GPIO<span style="color: #555555">.</span>add_event_detect(<span style="color: #F
     <script src="dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
-  </body>
+</body>
 </html>
